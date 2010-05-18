@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="IP displayer (command)" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<talkaction words="!ip" event="buffer"><![CDATA[
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Your IP: " .. doConvertIntegerToIp(getPlayerIp(cid)))
+	]]></talkaction>
+</mod>

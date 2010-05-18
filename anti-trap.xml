@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="Anti-trap" version="1.2" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<changelog><![CDATA[
+		* [01/08/2009 v1.1] From now, it cannot be used by protected players (config.protectionLevel)
+		* [07/08/2009 v1.2] Added optional param - player name, so it now works in diagonal directions!
+	]]></changelog>
+
+	<talkaction words="/noob" logged="no" event="script"><![CDATA[
+		local config = {
+			protectionLevel = getConfigValue('protectionLevel')
+		}
+
+		function onSay(cid, words, param, channel)
+			local pos = getCreaturePosition(cid)
+			if(getTileInfo(pos).protection) then
+				return true
+			end
+
+			local target = 0
+			param = param:trim()
+			if(param == '') then
+				pos = getPosByDir(pos, getCreatureLookDirection(cid))
+				target = getTopCreature(pos).uid
+			else
+				target = getPlayerByNameWildcard(param)
+				if(target ~= 0) then
+					pos = getCreaturePosition(target)
+					if(getDistanceBetween(getCreaturePosition(cid), pos) > 1) then
+						return true
+					end
+				end
+			end
+
+			if(target == 0 or getTileInfo(pos).protection or getPlayerCustomFlagValue(target, PlayerCustomFlag_GamemasterPrivileges)) then
+				return true
+			end
+
+			if(getPlayerLevel(cid) < config.protectionLevel or getPlayerLevel(target) >= config.protectionLevel) then
+				return true
+			end
+
+			local tmp = getCreaturePosition(cid)
+			if(doTeleportThing(cid, pos, true) and not isPlayerGhost(cid)) then
+				doSendMagicEffect(tmp, CONST_ME_POFF)
+				doSendMagicEffect(pos, CONST_ME_TELEPORT)
+			end
+			return false
+		end
+	]]></talkaction>
+</mod>

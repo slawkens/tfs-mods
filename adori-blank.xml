@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="adori-blank" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<description><![CDATA[
+		This modification creates a new spell - "adori blank", which will conjure a blank rune when used.
+	]]></description>
+
+	<conjure name="Blank Rune" words="adori blank" conjureId="2260" aggressive="0" conjureCount="1" lvl="10" maglv="5" mana="50" soul="1" function="conjureRune">
+		<vocation id="1;2;3;5;6;7"/>
+	</conjure>
+</mod>

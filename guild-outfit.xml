@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="Guild Outfit (command)" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<talkaction words="!go" event="script"><![CDATA[
+		local config = {
+			storage = 3002,
+			exhaustion = 30
+		}
+
+		function onSay(cid, words, param, channel)
+			if(exhaustion.check(cid, config.storage)) then
+				doPlayerSendCancel(cid, "You can change outfit only 1 time per " .. config.exhaustion .. " seconds.")
+				return true
+			end
+
+			local playerGuild = getPlayerGuildId(cid)
+			if(not playerGuild or playerGuild == 0) then
+				doPlayerSendCancel(cid, "Sorry, you're not in a guild.");
+				return true
+			end
+
+			if(getPlayerGuildLevel(cid) < GUILDLEVEL_LEADER) then
+				doPlayerSendCancel(cid, "You have to be Leader of your guild to change outfits!");
+				return true
+			end
+
+			local outfit, members = getCreatureOutfit(cid), 0
+			local message = "*Guild* Your outfit has been changed by leader. (" .. getCreatureName(cid) .. ")"
+			for _, tid in ipairs(getPlayersOnline()) do
+				if(getPlayerGuildId(tid) == playerGuild and cid ~= tid) then
+					local newOutfit = outfit
+					if(not canPlayerWearOutfit(tid, outfit.lookType, outfit.lookAddons)) then
+						local tmpOutfit = getCreatureOutfit(tid)
+						newOutfit.lookAddons = 0--tmpOutfit.lookAddons
+						if(not canPlayerWearOutfit(tid, outfit.lookType, 0)) then
+							newOutfit.lookType = tmpOutfit.lookType
+						end
+					end
+
+					doSendMagicEffect(getCreaturePosition(tid), 66)
+					doCreatureChangeOutfit(tid, newOutfit)
+					doPlayerSendTextMessage(tid, MESSAGE_INFO_DESCR, message)
+					members = members + 1
+				end
+			end
+
+			exhaustion.set(cid, config.storage, config.exhaustion)
+			doPlayerSendCancel(cid, "Guild members outfit has been changed. (Total: " .. members .. ")")
+			return true
+		end
+	]]>
+	</talkaction>
+</mod>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="Advance effect" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="AdvanceEffect_config"><![CDATA[
+		-- should magic effect by displayed? Otherwise, only advance words are shown.
+		effect = "yes"
+
+		-- magic effect id (type)
+		effectType = 30
+	]]></config>
+
+	<event type="advance" name="AdvanceEffect_event" event="script"><![CDATA[
+		domodlib("AdvanceEffect_config")
+
+		local config = {
+			effect = getBooleanFromString(effect),
+			effectType = effectType
+		}
+
+		function onAdvance(cid, skill, oldLevel, newLevel)
+			if(config.effect and newLevel % 10 == 0) then
+				for _, pos in pairs(getArea(getCreaturePosition(cid), 1, 1)) do
+					doSendMagicEffect(pos, config.effectType)
+				end
+			end
+
+			doCreatureSay(cid, SKILL_NAMES[skill]:gsub("%a", string.upper, 1) .. " UP [" .. newLevel .. "]", TALKTYPE_ORANGE_1)
+			return true
+		end
+	]]>
+	</event>
+
+	<event type="login" name="AdvanceEffect_login" event="script"><![CDATA[
+		function onLogin(cid)
+			registerCreatureEvent(cid, "AdvanceEffect_event")
+			return true
+		end
+	]]></event>
+</mod>

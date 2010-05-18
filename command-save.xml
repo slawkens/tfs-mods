@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="save (command)" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<talkaction words="!save" event="script"><![CDATA[
+		local config = {
+			storage = 200029,
+			exhaustionInMinutes = 3
+		}
+
+		function onSay(cid, words, param)
+			if(exhaustion.check(cid, config.storage)) then
+				doPlayerSendCancel(cid, "You can save yourself only 1 time per " .. config.exhaustionInMinutes .. " minutes.")
+				return true
+			end
+
+			if(doPlayerSave(cid)) then
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You have been succesfully saved ;-)")
+				exhaustion.set(cid, config.storage, config.exhaustionInMinutes * 60)
+			else
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Your character couldn't be saved.")
+			end
+
+			return true
+		end
+	]]></talkaction>
+</mod>
