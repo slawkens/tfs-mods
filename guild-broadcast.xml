@@ -7,7 +7,7 @@
 	]]></config>
 
 	<talkaction words="!gc" event="script"><![CDATA[
-		domodlib("guild-broadcast-config")
+		domodlib('guild-broadcast-config')
 
 		local config = {
 			exhaustion = exhaustion,
