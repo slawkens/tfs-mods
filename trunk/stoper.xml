@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="Stop-watch" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="stopwatch_config"><![CDATA[
+		config = {
+			showMessage = "yes",
+			storage = 40001,
+			animationColor = TEXTCOLOR_YELLOW,
+			limit = 600,
+			checkDelay = 10
+		}
+	]]></config>
+	<action itemid="6091" event="script"><![CDATA[
+		domodlib('stopwatch_config')
+		config.showMessage = getBooleanFromString(config.showMessage)
+		local function repeatTimer(cid, repeats)
+			if(not isPlayer(cid) or getPlayerStorageValue(cid, config.storage) ~= 1) then
+				return
+			end
+
+			if(repeats == 0) then
+				addEvent(repeatTimer, 1000, cid, repeats + 1)
+			elseif(repeats < config.limit and ((repeats % config.checkDelay ~= 0) or (getPlayerItemCount(cid, 6091) > 0))) then
+					doSendAnimatedText(getCreaturePosition(cid), repeats, config.animationColor)
+					repeats = repeats + 1
+					addEvent(repeatTimer, 1000, cid, repeats)
+			else
+				setRunning(cid, false)
+			end
+		end
+
+		local function setRunning(cid, running)
+			setPlayerStorageValue(cid, config.storage, running and 1 or 0)
+			if(config.showMessage) then
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_DEFAULT, os.date("Stop-watch " .. (running and "started" or "stopped") .. " at %H:%M:%S."))
+			end
+		end
+
+		function onUse(cid, item, fromPosition, itemEx, toPosition)
+			if(getPlayerStorageValue(cid, config.storage) == 1) then
+				setRunning(cid, false)
+				return true
+			end
+
+			setRunning(cid, true)
+			repeatTimer(cid, 0)
+			return true
+		end
+	]]></action>
+
+	<item id="6091" name="stoper" override="yes"/>
+</mod>

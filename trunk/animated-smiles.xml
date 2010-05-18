@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="Animated Smiles" version="1.1" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="animatedsmiles_config"><![CDATA[
+		exhaustion = 1 -- in seconds
+		storage = 3000 -- storage value used for exhaustion
+	]]></config>
+
+	<talkaction words="xd, :d, ;d, =d, xp, :p, ;p, =p, :o, ;o, ;s, :s, :/, ;/, :*, ;*, =*, :>, ;>, :), ;), =), :(, ;(, =(, :[, ;[, :], ;], :@, ;@, ^^, ^.^, -.-" separator="," log="no" case-sensitive="no" event="script"><![CDATA[
+		domodlib('animatedsmiles_config')
+
+		function onSay(cid, words, param, channel)
+			if(channel ~= CHANNEL_DEFAULT) then
+				return false
+			end
+
+			if(exhaustion.check(cid, storage)) then -- prevent spam
+				return true
+			end
+
+			if(isInArray({":*", ";*", "=*"}, words)) then
+				doSendMagicEffect(getCreaturePosition(cid), CONST_ME_HEARTS)
+			end
+
+			exhaustion.set(cid, storage, exhaust)
+			doCreatureSay(cid, words, TALKTYPE_ORANGE_1)
+			return true
+		end
+	]]></talkaction>
+</mod>

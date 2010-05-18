@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="Ballista" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<action itemid="5692;5695;5698;5701" event="script"><![CDATA[
+		function onUse(cid, item, fromPosition, itemEx, toPosition)
+			local pos = getThingPos(item.uid)
+			if(item.itemid == 5692) then
+				pos.y = pos.y - 6
+			elseif(item.itemid == 5695) then
+				pos.y = pos.y + 6
+			elseif(item.itemid == 5698) then
+				pos.x = pos.x - 8
+				pos.y = pos.y + 1
+			elseif(item.itemid == 5701) then
+				pos.x = pos.x + 8
+				pos.y = pos.y - 1
+			end
+
+			doSendDistanceShoot(fromPosition, pos, CONST_ANI_BOLT)
+			return true
+		end
+	]]></action>
+</mod>

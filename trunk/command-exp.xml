@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="!exp talkaction" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<talkaction words="!exp" event="buffer"><![CDATA[
+			param = param:trim()
+			if(param == '') then
+				local newLevel = getPlayerLevel(cid) + 1
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You need " .. getExperienceForLevel(newLevel) - getPlayerExperience(cid) ..
+					" experience to gain next level." ..
+					" Today you have gained " .. getPlayerTodayExperience(cid) .. " experience points." ..
+					" Your experience record: " .. getPlayerExperienceRecord(cid) .. ".")
+				return true
+			end
+
+			local mid = getCreatureByName(param)
+			if(isMonster(mid)) then
+				local playerLevel = getPlayerLevel(cid)
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, 'To gain next level you need to kill '..string.sub((getExperienceForLevel(playerLevel + 1)- getPlayerExperience(cid)) / (getMonsterInfo(param).experience * getExperienceStage(playerLevel)), 1, 4)..' '..param..'\'s')
+			end
+			return true
+	]]></talkaction>
+</mod>
