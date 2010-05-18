@@ -3,9 +3,9 @@
 	<config name="stop-watch-config"><![CDATA[
 		messages = "yes", -- display messages when starting or stopping stop watch, fe. "Stop watch started at 12:05:04."?
 		animation = TEXTCOLOR_YELLOW,
-		storage = 40001, -- used to save character stop watch state
+		storage = 3004, -- storage value used to save stop watch state
 		limit = 600, -- time limit in seconds (default 10 minutes)
-		delay = 10 -- how often check if player have still stop watch in his inventory (in seconds, default 10)
+		delay = 10 -- how often check if player have still stop watch in his inventory (in seconds, default 10, lower values can slow server)
 	]]></config>
 
 	<action itemid="6091" event="script"><![CDATA[
@@ -26,7 +26,7 @@
 
 			if(repeats == 0) then
 				addEvent(repeatTimer, 1000, cid, repeats + 1)
-			elseif(repeats < config.limit and ((repeats % config.checkDelay ~= 0) or (getPlayerItemCount(cid, 6091) > 0))) then
+			elseif(repeats < config.limit and ((repeats % config.delay ~= 0) or (getPlayerItemCount(cid, 6091) > 0))) then
 					doSendAnimatedText(getCreaturePosition(cid), repeats, config.animation)
 					repeats = repeats + 1
 					addEvent(repeatTimer, 1000, cid, repeats)

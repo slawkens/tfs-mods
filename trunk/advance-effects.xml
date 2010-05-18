@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mod name="advance-effect" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<config name="advance-effect-config"><![CDATA[
-		-- should magic effect by displayed? Otherwise, only advance words are shown.
+		-- should magic effect by displayed? Otherwise, only advance words are shown
 		effect = "yes"
 
 		-- magic effect id (type)
@@ -9,7 +9,7 @@
 	]]></config>
 
 	<event type="advance" name="advance-effect-event" event="script"><![CDATA[
-		domodlib("advance-effect-config")
+		domodlib('advance-effect-config')
 
 		local config = {
 			effect = getBooleanFromString(effect),
@@ -28,10 +28,8 @@
 		end
 	]]></event>
 
-	<event type="login" name="advance-effect-login" event="script"><![CDATA[
-		function onLogin(cid)
-			registerCreatureEvent(cid, "advance-effect-event")
-			return true
-		end
+	<event type="login" name="advance-effect-login" event="buffer"><![CDATA[
+		registerCreatureEvent(cid, "advance-effect-event")
+		_result = true
 	]]></event>
 </mod>

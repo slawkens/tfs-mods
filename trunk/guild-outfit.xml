@@ -6,7 +6,7 @@
 	]]></config>
 
 	<talkaction words="!go" event="script"><![CDATA[
-		domodlib("guild-outfit-config")
+		domodlib('guild-outfit-config')
 
 		local config = {
 			exhaustion = exhaustion
