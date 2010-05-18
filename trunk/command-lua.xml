@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mod name="LUA Executor (command)" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+<mod name="command-lua" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<talkaction words="/lua" access="6" event="script"><![CDATA[
 		function onSay(cid, words, param, channel)
 			param = string.gsub(param, "cid", cid)

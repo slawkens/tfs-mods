@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mod name="Stop-watch" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
-	<config name="stopwatch_config"><![CDATA[
-		config = {
-			showMessage = "yes",
-			storage = 40001,
-			animationColor = TEXTCOLOR_YELLOW,
-			limit = 600,
-			checkDelay = 10
-		}
+<mod name="stop-watch" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="stop-watch-config"><![CDATA[
+		messages = "yes", -- display messages when starting or stopping stop watch, fe. "Stop watch started at 12:05:04."?
+		animation = TEXTCOLOR_YELLOW,
+		storage = 40001, -- used to save character stop watch state
+		limit = 600, -- time limit in seconds (default 10 minutes)
+		delay = 10 -- how often check if player have still stop watch in his inventory (in seconds, default 10)
 	]]></config>
+
 	<action itemid="6091" event="script"><![CDATA[
-		domodlib('stopwatch_config')
-		config.showMessage = getBooleanFromString(config.showMessage)
+		domodlib('stop-watch-config')
+
+		local config = {
+			messages = getBooleanFromString(messages),
+			animation = animation,
+			storage = storage,
+			limit = limit,
+			delay = delay
+		}
+
 		local function repeatTimer(cid, repeats)
 			if(not isPlayer(cid) or getPlayerStorageValue(cid, config.storage) ~= 1) then
 				return
@@ -20,7 +27,7 @@
 			if(repeats == 0) then
 				addEvent(repeatTimer, 1000, cid, repeats + 1)
 			elseif(repeats < config.limit and ((repeats % config.checkDelay ~= 0) or (getPlayerItemCount(cid, 6091) > 0))) then
-					doSendAnimatedText(getCreaturePosition(cid), repeats, config.animationColor)
+					doSendAnimatedText(getCreaturePosition(cid), repeats, config.animation)
 					repeats = repeats + 1
 					addEvent(repeatTimer, 1000, cid, repeats)
 			else
@@ -30,7 +37,7 @@
 
 		local function setRunning(cid, running)
 			setPlayerStorageValue(cid, config.storage, running and 1 or 0)
-			if(config.showMessage) then
+			if(config.messages) then
 				doPlayerSendTextMessage(cid, MESSAGE_STATUS_DEFAULT, os.date("Stop-watch " .. (running and "started" or "stopped") .. " at %H:%M:%S."))
 			end
 		end

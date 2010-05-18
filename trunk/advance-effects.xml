@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mod name="Advance effect" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
-	<config name="AdvanceEffect_config"><![CDATA[
+<mod name="advance-effect" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="advance-effect-config"><![CDATA[
 		-- should magic effect by displayed? Otherwise, only advance words are shown.
 		effect = "yes"
 
@@ -8,8 +8,8 @@
 		effectType = 30
 	]]></config>
 
-	<event type="advance" name="AdvanceEffect_event" event="script"><![CDATA[
-		domodlib("AdvanceEffect_config")
+	<event type="advance" name="advance-effect-event" event="script"><![CDATA[
+		domodlib("advance-effect-config")
 
 		local config = {
 			effect = getBooleanFromString(effect),
@@ -26,12 +26,11 @@
 			doCreatureSay(cid, SKILL_NAMES[skill]:gsub("%a", string.upper, 1) .. " UP [" .. newLevel .. "]", TALKTYPE_ORANGE_1)
 			return true
 		end
-	]]>
-	</event>
+	]]></event>
 
-	<event type="login" name="AdvanceEffect_login" event="script"><![CDATA[
+	<event type="login" name="advance-effect-login" event="script"><![CDATA[
 		function onLogin(cid)
-			registerCreatureEvent(cid, "AdvanceEffect_event")
+			registerCreatureEvent(cid, "advance-effect-event")
 			return true
 		end
 	]]></event>

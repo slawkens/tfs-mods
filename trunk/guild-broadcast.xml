@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mod name="Guild Broadcast (command)" version="1.0" author="elf, slawkens" contact="slawkens@gmail.com" enabled="yes">
-	<talkaction words="!gc" event="script"><![CDATA[
-		local config = {
-			storage = 3001,
-			storageColor = 3002,
-			exhaustion = 10
-		}
+<mod name="guild-broadcast" version="1.0" author="elf, slawkens" contact="otland.net" enabled="yes">
+	<config name="guild-broadcast-config"><![CDATA[
+		exhaustion = 10 -- in seconds
+		storage = 3001 -- storage value used to save exhaustion
+		storageColor = 3002 -- storage value used to save previously used message color
+	]]></config>
 
-		MAN_TALKACTIONS['gc'] = {
-			desc = "Guild messanger.",
-			examples = {"green;Hi members!", "Elol", "red;Warning, today we started war with xxx!"},
-			params = {"<color>", "message"},
-			paramsHelp = {MAN_CONSTS.msgTypes}
+	<talkaction words="!gc" event="script"><![CDATA[
+		domodlib("guild-broadcast-config")
+
+		local config = {
+			exhaustion = exhaustion,
+			storage = storage,
+			storageColor = storageColor
 		}
 
 		function onSay(cid, words, param, channel)
 			if(exhaustion.check(cid, config.storage)) then
-				doPlayerSendCancel(cid, "You can broadcast only 1 message per " .. config.exhaustion .. " seconds.")
+				doPlayerSendCancel(cid, "You can broadcast message only once per " .. config.exhaustion .. " seconds.")
 				return true
 			end
 
 			if(param == '') then
-				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You need to type a message to guild members!")
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You need to type a message to broadcast!")
 				return true
 			end
 
@@ -71,6 +72,5 @@
 			doPlayerSendCancel(cid, "Message sent to your guild members. (Total: " .. members .. ")")
 			return true
 		end
-	]]>
-	</talkaction>
+	]]></talkaction>
 </mod>

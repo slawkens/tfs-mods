@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mod name="adori sum (spell)" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+<mod name="adori-sum" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="adori-sum-config"><![CDATA[
+		disabledRunes = {2294} -- im using this as points rune - feel free to remove it (leave only brackets - {})
+	]]></config>
+
 	<instant name="Merge runes" words="adori sum" lvl="15" mana="100" soul="3" aggressive="0" selftarget="1" exhaustion="1000" event="script">
 		<text><![CDATA[
+			domodlib("adori-sum-config")
+
 			local config = {
-				disabledRunes = {2294} -- im using this as points rune - feel free to remove it (leave only brackets - {})
+				disabledRunes = disabledRunes
 			}
 
 			function onCastSpell(cid, var)
@@ -40,7 +46,7 @@
 				doSendMagicEffect(getCreaturePosition(cid), CONST_ME_MAGIC_RED)
 				return true
 			end
-		]]></text>
+			]]></text>
 		<vocation id="1-8"/>
 	</instant>
 </mod>
