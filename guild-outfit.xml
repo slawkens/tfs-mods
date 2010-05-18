@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mod name="Guild Outfit (command)" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+<mod name="guild-outfit" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="guild-outfit-config"><![CDATA[
+		exhaustion = 30 -- in seconds
+		storage = 3002 -- storage value used to save exhaustion
+	]]></config>
+
 	<talkaction words="!go" event="script"><![CDATA[
+		domodlib("guild-outfit-config")
+
 		local config = {
-			storage = 3002,
-			exhaustion = 30
+			exhaustion = exhaustion
+			storage = storage,
 		}
 
 		function onSay(cid, words, param, channel)
@@ -47,6 +54,5 @@
 			doPlayerSendCancel(cid, "Guild members outfit has been changed. (Total: " .. members .. ")")
 			return true
 		end
-	]]>
-	</talkaction>
+	]]></talkaction>
 </mod>

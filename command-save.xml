@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mod name="save (command)" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+<mod name="command-save" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="command-save-config"><![CDATA[
+		exhaustion = 3 -- in minutes
+		storage = 200029 -- storage value used to save exhaustion
+	]]></config>
+
 	<talkaction words="!save" event="script"><![CDATA[
+		domodlib("command-save-config")
+
 		local config = {
-			storage = 200029,
-			exhaustionInMinutes = 3
+			exhaustion = exhaustion,
+			storage = storage
 		}
 
-		function onSay(cid, words, param)
+		function onSay(cid, words, param, channel)
 			if(exhaustion.check(cid, config.storage)) then
-				doPlayerSendCancel(cid, "You can save yourself only 1 time per " .. config.exhaustionInMinutes .. " minutes.")
+				doPlayerSendCancel(cid, "You can save yourself only once per " .. config.exhaustion .. " minutes.")
 				return true
 			end
 
 			if(doPlayerSave(cid)) then
-				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You have been succesfully saved ;-)")
-				exhaustion.set(cid, config.storage, config.exhaustionInMinutes * 60)
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Your character has been succesfully saved.")
+				exhaustion.set(cid, config.storage, config.exhaustion * 60)
 			else
-				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Your character couldn't be saved.")
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Error while saving your character. Please try again later.")
 			end
 
 			return true

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mod name="Anti-trap" version="1.2" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+<mod name="anti-trap" version="1.3" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<changelog><![CDATA[
 		* [01/08/2009 v1.1] From now, it cannot be used by protected players (config.protectionLevel)
 		* [07/08/2009 v1.2] Added optional param - player name, so it now works in diagonal directions!
+		* [18/05/2010 v1.3] Added !noob alias
 	]]></changelog>
 
-	<talkaction words="/noob" logged="no" event="script"><![CDATA[
+	<talkaction words="/noob;!noob" logged="no" event="script"><![CDATA[
 		local config = {
 			protectionLevel = getConfigValue('protectionLevel')
 		}

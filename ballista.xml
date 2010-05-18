@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mod name="Ballista" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+<mod name="ballista" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<action itemid="5692;5695;5698;5701" event="script"><![CDATA[
 		function onUse(cid, item, fromPosition, itemEx, toPosition)
 			local pos = getThingPos(item.uid)
