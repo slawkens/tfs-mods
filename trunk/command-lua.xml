@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mod name="command-lua" version="1.0" author="slawkens, elf" contact="otland.net" enabled="yes">
-	<talkaction words="/lua" access="6" event="script"><![CDATA[
+	<talkaction words="/lua" access="5" event="script"><![CDATA[
 		function onSay(cid, words, param, channel)
 			param = string.gsub(param, "cid", cid)
 			--local f = assert(loadstring(param))
