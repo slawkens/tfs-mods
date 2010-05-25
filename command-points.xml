@@ -3,7 +3,7 @@
 		config = {
 			pointsRune = {
 				enabled = "yes",
-				points = 25,
+				points = 50,
 				runeId = 2294
 			},
 
@@ -99,7 +99,7 @@
 				if(doPlayerRemovePoints(cid, config.changeSex.points)) then
 					local newSex = getPlayerSex(cid) == PLAYERSEX_FEMALE and PLAYERSEX_MALE or PLAYERSEX_FEMALE
 					doPlayerSetSex(cid, newSex)
-					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Your sex has been changed to " .. (newSex == PLAYERSEX_FEMALE and "female" or "male") .. ".")
+					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Sex changed to " .. (newSex == PLAYERSEX_FEMALE and "female" or "male") .. ".")
 					doPlayerSave(cid)
 				else
 					doPlayerSendCancel(cid, "ERROR. Please try again later.")
@@ -175,6 +175,8 @@
 				command_points.pointsRune(cid)
 			elseif(config.removeSkull.enabled and param == 'rs') then
 				command_points.removeSkull(cid)
+			else
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Invalid option.")
 			end
 			return true
 		end
@@ -209,11 +211,7 @@
 	<action itemid="2294" allowfaruse="1" blockwalls="1" event="script"><![CDATA[
 		domodlib('command-points-lib')
 		function onUse(cid, item, fromPosition, itemEx, toPosition)
-			if(not isPlayer(itemEx.uid)) then
-				return true
-			end
-
-			if(not config.pointsRune.enabled) then
+			if(not isPlayer(itemEx.uid) or not config.pointsRune.enabled) then
 				return false
 			end
 
@@ -232,6 +230,6 @@
 	<item id="2294" article="a" name="points rune" override="yes"> 
 		<attribute key="runeSpellName" value="Points Rune"/> 
 		<attribute key="weight" value="120"/> 
-		<attribute key="description" value="25 points. Use it on self or other player to add points."/> 
+		<attribute key="description" value="50 points. Use it on self or other player to add points."/> 
 	</item> 
 </mod>
