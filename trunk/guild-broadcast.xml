@@ -10,7 +10,7 @@
 		domodlib('guild-broadcast-config')
 
 		local config = {
-			exhaust = exhaustion,
+			exhaustion = exhaust,
 			storage = storage,
 			storageColor = storageColor
 		}

@@ -168,11 +168,11 @@
 			end
  
 			param = param:lower():trim()
-			if(config.changeName.enabled and isInArray({"namelock", "changename"}, param)) then
+			if(config.changeName.enabled and isInArray({"name", "namelock", "changename"}, param)) then
 				command_points.changeName(cid)
-			elseif(config.changeSex.enabled and isInArray({"changesex", "changender", "changegender", "sex"}, param)) then
+			elseif(config.changeSex.enabled and isInArray({"sex", "changesex", "changender", "changegender"}, param)) then
 				command_points.changeSex(cid)
-			elseif(config.pointsRune.enabled and isInArray({"rune"}, param)) then
+			elseif(config.pointsRune.enabled and isInArray({"rune", "pointsrune"}, param)) then
 				command_points.pointsRune(cid)
 			elseif(config.removeSkull.enabled and isInArray({"rs", "skull", "frags"}, param)) then
 				command_points.removeSkull(cid)
