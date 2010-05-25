@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mod name="guild-outfit" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<config name="guild-outfit-config"><![CDATA[
-		exhaustion = 30 -- in seconds
+		exhaust = 30 -- in seconds
 		storage = 3002 -- storage value used to save exhaustion
 	]]></config>
 
@@ -9,7 +9,7 @@
 		domodlib('guild-outfit-config')
 
 		local config = {
-			exhaustion = exhaustion,
+			exhaustion = exhaust,
 			storage = storage
 		}
 

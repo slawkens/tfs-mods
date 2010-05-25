@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mod name="guild-broadcast" version="1.0" author="elf, slawkens" contact="otland.net" enabled="yes">
 	<config name="guild-broadcast-config"><![CDATA[
-		exhaustion = 10 -- in seconds
+		exhaust = 10 -- in seconds
 		storage = 3001 -- storage value used to save exhaustion
 		storageColor = 3002 -- storage value used to save previously used message color
 	]]></config>
@@ -10,7 +10,7 @@
 		domodlib('guild-broadcast-config')
 
 		local config = {
-			exhaustion = exhaustion,
+			exhaust = exhaustion,
 			storage = storage,
 			storageColor = storageColor
 		}
