@@ -9,8 +9,8 @@
 		domodlib('guild-outfit-config')
 
 		local config = {
-			exhaustion = exhaustion
-			storage = storage,
+			exhaustion = exhaustion,
+			storage = storage
 		}
 
 		function onSay(cid, words, param, channel)
@@ -21,12 +21,12 @@
 
 			local playerGuild = getPlayerGuildId(cid)
 			if(not playerGuild or playerGuild == 0) then
-				doPlayerSendCancel(cid, "Sorry, you're not in a guild.");
+				doPlayerSendCancel(cid, "Sorry, you're not in a guild.")
 				return true
 			end
 
 			if(getPlayerGuildLevel(cid) < GUILDLEVEL_LEADER) then
-				doPlayerSendCancel(cid, "You have to be Leader of your guild to change outfits!");
+				doPlayerSendCancel(cid, "You have to be Leader of your guild to change outfits!")
 				return true
 			end
 
