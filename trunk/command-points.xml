@@ -143,9 +143,9 @@
 				end
 
 				if(doPlayerRemovePoints(cid, config.pointsRune.points)) then
-					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, "Your red skull has been taken off!\nRemaining premium points: "$
+					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, "Your red skull has been taken off!\nRemaining premium points: " .. getPlayerPoints(cid))
 					doCreatureSetSkullType(cid, SKULL_NONE)
-					doWriteLogFile("./data/logs/removeskull.log", "Success: " .. getCreatureName(cid))
+					doWriteLogFile("./data/logs/remove_skull.log", "Success: " .. getCreatureName(cid))
 					if(config.removeSkull.frags) then
 						doPlayerSetRedSkullTicks(cid, 0)
 					end
