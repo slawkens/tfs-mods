@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="command-buy" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="command-buy-config"><![CDATA[
+		items = {
+			['aol'] =		{cost = 30000,	id = 2173},
+			['backpack'] =	{cost = 100,	id = 1988},
+			['rope'] =		{cost = 50,		id = 2120},
+			['shovel'] =	{cost = 50,		id = 2554},
+			['machete'] =	{cost = 50,		id = 2420},
+			['fishing rod'] = {cost = 50,	id = 2580}
+		}
+	]]></config>
+
+	<talkaction words="!buy" event="script"><![CDATA[
+		domodlib('command-buy-config')
+		local config = {
+			items = items
+		}
+
+		function onSay(cid, words, param, channel)
+			if(param:trim() == '') then
+				local str = ""
+				for name, options in pairs(config.items) do
+					str = str .. "\n" .. name
+				end
+
+				doPlayerPopupFYI(cid, "Items list - !buy\n\nItems:" .. str)
+				return true
+			end
+
+			local item = config.items[param]
+			if(item ~= nil) then
+				if(not doPlayerRemoveMoney(cid, item.cost)) then
+					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Sorry, you dont have enough money (" .. param .. " cost " .. item.cost .. ")")
+					return true
+				end
+
+				local amount = item.amount and item.amount or 1
+				doPlayerAddItem(cid, item.id, amount)
+				doSendMagicEffect(getCreaturePosition(cid), CONST_ME_GIFT_WRAPS)
+			end
+
+			return true
+		end
+	]]></talkaction>
+</mod>
