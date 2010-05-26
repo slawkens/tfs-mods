@@ -23,6 +23,12 @@
 				enabled = "yes",
 				points = 50,
 				frags = "yes" -- remove frags too?
+			},
+
+			refuelStamina = {
+				enabled = "yes",
+				points = 30,
+				full = 42 * 60 * 1000 -- full stamina
 			}
 		}
 	]]></config>
@@ -36,6 +42,8 @@
 
 		config.removeSkull.enabled = getBooleanFromString(config.removeSkull.enabled)
 		config.removeSkull.frags = getBooleanFromString(config.removeSkull.frags)
+
+		config.refuelStamina.enabled = getBooleanFromString(config.refuelStamina.enabled)
 
 		function getPlayerPoints(cid)
 			return getAccountPoints(getPlayerAccountId(cid))
@@ -155,6 +163,21 @@
 				else
 					doPlayerSendCancel(cid, "ERROR. Please try again later.")
 				end
+			end,
+
+			refuelStamina = function (cid)
+				if(getPlayerStamina(cid) >= config.refuelStamina.full) then
+					doPlayerSendCancel(cid, "Your stamina is already full.")
+				elseif(not isPremium(cid)) then
+					doPlayerSendCancel(cid, "You must have a premium account.")
+				else
+					if(doPlayerRemovePoints(cid, config.pointsRune.points)) then
+						doPlayerSetStamina(cid, config.refuelStamina.full)
+						doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, "Your stamina has been refilled.")
+					else
+						doPlayerSendCancel(cid, "ERROR. Please try again later.")
+					end
+				end
 			end
 		}
 	]]></lib>
@@ -176,6 +199,8 @@
 				command_points.pointsRune(cid)
 			elseif(config.removeSkull.enabled and isInArray({"rs", "skull", "frags"}, param)) then
 				command_points.removeSkull(cid)
+			elseif(config.refuelStamina.enabled and isInArray({"stamina"}, param)) then
+				command_points.refuelStamina(cid)
 			else
 				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Invalid option.")
 			end
