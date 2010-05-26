@@ -24,20 +24,22 @@
 					str = str .. "\n" .. name
 				end
 
-				doPlayerPopupFYI(cid, "Items list - !buy\n\nItems:" .. str)
+				doPlayerPopupFYI(cid, "!buy\n\n:" .. str)
 				return true
 			end
 
 			local item = config.items[param]
 			if(item ~= nil) then
 				if(not doPlayerRemoveMoney(cid, item.cost)) then
-					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Sorry, you dont have enough money (" .. param .. " cost " .. item.cost .. ")")
+					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Not enough money to buy " .. param .. ".\n(" .. item.cost .. "gp)")
 					return true
 				end
 
 				local amount = item.amount and item.amount or 1
 				doPlayerAddItem(cid, item.id, amount)
 				doSendMagicEffect(getCreaturePosition(cid), CONST_ME_GIFT_WRAPS)
+			else
+				doPlayerSendCancel(cid, "Item not found. Use '!buy' to see the list.")
 			end
 
 			return true
