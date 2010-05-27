@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mod name="animated-smiles" version="1.1" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<config name="animated-smiles-config"><![CDATA[
-		exhaustion = 1 -- in seconds
+		exhaust = 1 -- in seconds
 		storage = 3000 -- storage value used to save exhaustion
 	]]></config>
 
 	<talkaction words="xd, :d, ;d, =d, xp, :p, ;p, =p, :o, ;o, ;s, :s, :/, ;/, :*, ;*, =*, :>, ;>, :), ;), =), :(, ;(, =(, :[, ;[, :], ;], :@, ;@, ^^, ^.^, -.-" separator="," log="no" case-sensitive="no" event="script"><![CDATA[
 		domodlib('animated-smiles-config')
 
+		local config = {
+			exhaustion = exhaust,
+			storage = storage
+		}
+
 		function onSay(cid, words, param, channel)
 			if(channel ~= CHANNEL_DEFAULT) then
 				return false
 			end
 
-			if(exhaustion.check(cid, storage)) then -- prevent spam
+			if(exhaustion.check(cid, config.storage)) then -- prevent spam
 				return true
 			end
 
@@ -21,7 +26,7 @@
 				doSendMagicEffect(getCreaturePosition(cid), CONST_ME_HEARTS)
 			end
 
-			exhaustion.set(cid, storage, exhaustion)
+			exhaustion.set(cid, config.storage, config.exhaustion)
 			doCreatureSay(cid, words, TALKTYPE_ORANGE_1)
 			return true
 		end

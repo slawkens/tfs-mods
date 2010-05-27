@@ -29,6 +29,8 @@
 
 	<action fromaid="3001" toaid="3013" event="script"><![CDATA[
 		domodlib('action-shop-config')
+		local items = items
+
 		function onUse(cid, item, fromPosition, itemEx, toPosition)
 			local tmp = items[item.actionid]
 			if(not tmp) then
