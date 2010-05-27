@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mod name="stop-watch" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<config name="stop-watch-config"><![CDATA[
-		messages = "yes", -- display messages when starting or stopping stop watch, fe. "Stop watch started at 12:05:04."?
-		animation = TEXTCOLOR_YELLOW,
-		storage = 3004, -- storage value used to save stop watch state
-		limit = 600, -- time limit in seconds (default 10 minutes)
+		messages = "yes" -- display messages when starting or stopping stop watch, fe. "Stop watch started at 12:05:04."?
+		animation = TEXTCOLOR_YELLOW
+		storage = 3004 -- storage value used to save stop watch state
+		limit = 600 -- time limit in seconds (default 10 minutes)
 		delay = 10 -- how often check if player have still stop watch in his inventory (in seconds, default 10, lower values can slow server)
 	]]></config>
 
-	<action itemid="6091" event="script"><![CDATA[
+	<action itemid="6091" event="script" override="yes"""><![CDATA[
 		domodlib('stop-watch-config')
 
 		local config = {
