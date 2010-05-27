@@ -1,0 +1,23 @@
+#summary List of all mods available.
+
+= Mods =
+
+Many of these have still version 1.0, because they were never released to the public before.
+|| *Name* || *Version* || *Description* ||
+|| [http://tfs-mods.googlecode.com/svn/trunk/action-shop.xml action-shop] || 1.0 || _Buy items by using other item._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/adori-blank.xml adori-blank] || 1.0 || _New spell used for conjuring blank runes._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/adori-sum.xml adori-sum] || 1.0 || _New spell used for merging runes._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/advance-effect.xml advance-effect] || 1.0 || _Display magic effect when player advance._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/annihilator.xml annihilator] || 1.0 || _Highly configurable annihilator quest, with support for many switches._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/animated-smiles.xml animated-smiles] || 1.0 || _Change character smiles into animated ones._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/anti-trap.xml anti-trap] || 1.2 || _New command *!noob* which will prevent blocking by noobs._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/ballista.xml ballista] || 1.0 || _Showing a nice realistic effect when using ballista._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/command-buy.xml command-buy] || 1.0 || _New command *!buy* - buying items with gold coins._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/command-exp command-exp] || 1.0 || _New command *!exp* displaying experience needed to advance._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/command-ip.xml command-ip] || 1.0 || _New command *!ip* displaying player ip._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/command-lua.xml command-lua] || 1.0 || _New command for admins */lua* for executing lua scripts directly from chat window._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/command-points.xml command-points] || 1.0 || _Change name, sex, remove skull/stamina for premium points._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/command-save.xml command-save] || 1.0 || _New command *!save* for self saving._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/guild-cast.xml guild-cast] || 1.0 || _New command *!gc* for broadcasting guild messages._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/guild-outfit.xml guild-outfit] || 1.0 || _New command *!go* for changing outfit of all guild members being online._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/stop-watch.xml stop-watch] || 1.0 || _Useful tool for counting passed time._||
