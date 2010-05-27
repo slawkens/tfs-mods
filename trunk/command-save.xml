@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mod name="command-save" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<config name="command-save-config"><![CDATA[
-		exhaustion = 3 -- in minutes
+		exhaust = 3 -- in minutes
 		storage = 3003 -- storage value used to save exhaustion
 	]]></config>
 
@@ -9,7 +9,7 @@
 		domodlib('command-save-config')
 
 		local config = {
-			exhaustion = exhaustion,
+			exhaustion = exhaust,
 			storage = storage
 		}
 

@@ -1,6 +1,8 @@
 <mod name="command-points" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes"> 
 	<config name="command-points-config"><![CDATA[
 		config = {
+			logFile = "data/logs/points.log", -- set file name where to save logs. Leave empty do disable logs.
+
 			pointsRune = {
 				enabled = "yes",
 				points = 50,
@@ -28,7 +30,7 @@
 			refuelStamina = {
 				enabled = "yes",
 				points = 30,
-				full = 42 * 60 * 1000 -- full stamina
+				full = 42 * 60 -- full stamina in minutes
 			}
 		}
 	]]></config>
@@ -67,27 +69,38 @@
 		end
 
 		command_points = {
+			config = config,
+
+			logAction = function (str)
+				if(command_points.config.logFile:trim() == '') then
+					return
+				end
+
+				doWriteLogFile(command_points.config.logFile, str)
+			end,
+
 			pointsRune = function (cid)
-				if(config.pointsRune.level and getPlayerLevel(cid) < config.pointsRune.level) then
-					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You need " .. config.pointsRune.level .. " level to buy this rune.")
+				if(command_points.config.pointsRune.level and getPlayerLevel(cid) < command_points.config.pointsRune.level) then
+					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You need " .. command_points.config.pointsRune.level .. " level to buy this rune.")
 					return true
 				end
 
-				if(getPlayerPoints(cid) < config.pointsRune.points) then
-					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, not enought points on your account. This rune cost " .. config.pointsRune.points .. " points.")
+				if(getPlayerPoints(cid) < command_points.config.pointsRune.points) then
+					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, not enought points on your account. This rune cost " .. command_points.config.pointsRune.points .. " points.")
 					return true
 				end
  
-				local item = doCreateItemEx(config.pointsRune.runeId, 1)
+				local item = doCreateItemEx(command_points.config.pointsRune.runeId, 1)
 				local status = doPlayerAddItemEx(cid, item, false)
 				if(status ~= RETURNVALUE_NOERROR and status) then
 					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Not enought space for rune.")
 					return true
 				end
  
-				if(doPlayerRemovePoints(cid, config.pointsRune.points)) then
+				if(doPlayerRemovePoints(cid, command_points.config.pointsRune.points)) then
 					doSendMagicEffect(getCreaturePos(cid), 40)
 					doPlayerSave(cid)
+					command_points.logAction("pointsRune: " .. getCreatureName(cid))
 				else
 					doPlayerSendCancel(cid, "ERROR. Please try again later.")
 				end
@@ -99,28 +112,29 @@
 					return true
 				end
 
-				if(os.time() < getPlayerStorageValue(cid, config.changeName.storage) + config.changeName.delay) then
+				if(os.time() < getPlayerStorageValue(cid, command_points.config.changeName.storage) + command_points.config.changeName.delay) then
 					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You can change your name only 1 time per day.")
 					return true
 				end
 
-				if(getPlayerPoints(cid) < config.changeName.points) then
-					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, not enought points on your account. Namelock cost " .. config.changeName.points .. " points.")
+				if(getPlayerPoints(cid) < command_points.config.changeName.points) then
+					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, not enought points on your account. Namelock cost " .. command_points.config.changeName.points .. " points.")
 					return true
 				end
 
-				if(doPlayerRemovePoints(cid, config.changeName.points)) then
-					setPlayerStorageValue(cid, config.changeName.storage, os.time())
+				if(doPlayerRemovePoints(cid, command_points.config.changeName.points)) then
+					setPlayerStorageValue(cid, command_points.config.changeName.storage, os.time())
 					doAddPlayerBanishment(getCreatureName(cid), BAN_PLAYER, -1, ACTION_NAMELOCK)
 					doRemoveCreature(cid)
+					command_points.logAction("changeName: " .. getCreatureName(cid))
 				else
 					doPlayerSendCancel(cid, "ERROR. Please try again later.")
 				end
 			end,
 
 			changeSex = function (cid)
-				if(getPlayerPoints(cid) < config.changeSex.points) then
-					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, not enought points on your account. Change sex cost " .. config.changeSex.points .. " points.")
+				if(getPlayerPoints(cid) < command_points.config.changeSex.points) then
+					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, not enought points on your account. Change sex cost " .. command_points.config.changeSex.points .. " points.")
 					return true
 				end
  
@@ -130,11 +144,12 @@
 					return true
 				end
 
-				if(doPlayerRemovePoints(cid, config.changeSex.points)) then
+				if(doPlayerRemovePoints(cid, command_points.config.changeSex.points)) then
 					local newSex = getPlayerSex(cid) == PLAYERSEX_FEMALE and PLAYERSEX_MALE or PLAYERSEX_FEMALE
 					doPlayerSetSex(cid, newSex)
 					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Sex changed to " .. (newSex == PLAYERSEX_FEMALE and "female" or "male") .. ".")
 					doPlayerSave(cid)
+					command_points.logAction("changeSex: " .. getCreatureName(cid))
 				else
 					doPlayerSendCancel(cid, "ERROR. Please try again later.")
 				end
@@ -146,16 +161,16 @@
 					return true
 				end
 
-				if(getPlayerPoints(cid) < config.removeSkull.points) then
-					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, not enought points on your account. Remove skull cost " .. config.removeFrags.points .. " points.")
+				if(getPlayerPoints(cid) < command_points.config.removeSkull.points) then
+					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, not enought points on your account. Remove skull cost " .. command_points.config.removeFrags.points .. " points.")
 					return true
 				end
 
-				if(doPlayerRemovePoints(cid, config.pointsRune.points)) then
+				if(doPlayerRemovePoints(cid, command_points.config.pointsRune.points)) then
 					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, "Your red skull has been taken off!\nRemaining premium points: " .. getPlayerPoints(cid))
 					doCreatureSetSkullType(cid, SKULL_NONE)
-					doWriteLogFile("./data/logs/remove_skull.log", "Success: " .. getCreatureName(cid))
-					if(config.removeSkull.frags) then
+					command_points.logAction("removeSkull: " .. getCreatureName(cid))
+					if(command_points.config.removeSkull.frags) then
 						doPlayerSetRedSkullTicks(cid, 0)
 					end
 
@@ -166,14 +181,15 @@
 			end,
 
 			refuelStamina = function (cid)
-				if(getPlayerStamina(cid) >= config.refuelStamina.full) then
+				if(getPlayerStamina(cid) >= command_points.config.refuelStamina.full) then
 					doPlayerSendCancel(cid, "Your stamina is already full.")
 				elseif(not isPremium(cid)) then
 					doPlayerSendCancel(cid, "You must have a premium account.")
 				else
-					if(doPlayerRemovePoints(cid, config.pointsRune.points)) then
-						doPlayerSetStamina(cid, config.refuelStamina.full)
+					if(doPlayerRemovePoints(cid, command_points.config.pointsRune.points)) then
+						doPlayerSetStamina(cid, command_points.config.refuelStamina.full)
 						doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, "Your stamina has been refilled.")
+						command_points.logAction("refuelStamina: " .. getCreatureName(cid))
 					else
 						doPlayerSendCancel(cid, "ERROR. Please try again later.")
 					end
@@ -191,15 +207,15 @@
 			end
  
 			param = param:lower():trim()
-			if(config.changeName.enabled and isInArray({"name", "namelock", "changename"}, param)) then
+			if(command_points.config.changeName.enabled and isInArray({"name", "namelock", "changename"}, param)) then
 				command_points.changeName(cid)
-			elseif(config.changeSex.enabled and isInArray({"sex", "changesex", "changender", "changegender"}, param)) then
+			elseif(command_points.config.changeSex.enabled and isInArray({"sex", "changesex", "changender", "changegender"}, param)) then
 				command_points.changeSex(cid)
-			elseif(config.pointsRune.enabled and isInArray({"rune", "pointsrune"}, param)) then
+			elseif(command_points.config.pointsRune.enabled and isInArray({"rune", "pointsrune"}, param)) then
 				command_points.pointsRune(cid)
-			elseif(config.removeSkull.enabled and isInArray({"rs", "skull", "frags"}, param)) then
+			elseif(command_points.config.removeSkull.enabled and isInArray({"rs", "skull", "frags"}, param)) then
 				command_points.removeSkull(cid)
-			elseif(config.refuelStamina.enabled and isInArray({"stamina"}, param)) then
+			elseif(command_points.config.refuelStamina.enabled and isInArray({"stamina"}, param)) then
 				command_points.refuelStamina(cid)
 			else
 				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Invalid option.")
@@ -237,12 +253,12 @@
 	<action itemid="2294" allowfaruse="1" blockwalls="1" event="script"><![CDATA[
 		domodlib('command-points-lib')
 		function onUse(cid, item, fromPosition, itemEx, toPosition)
-			if(not isPlayer(itemEx.uid) or not config.pointsRune.enabled) then
+			if(not isPlayer(itemEx.uid) or not command_points.config.pointsRune.enabled) then
 				return false
 			end
 
 			if(doRemoveItem(item.uid)) then
-				doPlayerAddPoints(itemEx.uid, config.pointsRune.points)
+				doPlayerAddPoints(itemEx.uid, command_points.config.pointsRune.points)
 				doSendMagicEffect(toPosition, CONST_ME_BIGCLOUDS)
 				doPlayerSave(cid)
 			else
