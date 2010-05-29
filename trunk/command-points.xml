@@ -1,4 +1,4 @@
-<mod name="command-points" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes"> 
+<mod name="command-points" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<config name="command-points-config"><![CDATA[
 		config = {
 			logFile = "data/logs/points.log", -- set file name where to save logs. Leave empty do disable logs.
@@ -23,8 +23,7 @@
 
 			removeSkull = {
 				enabled = "yes",
-				points = 50,
-				frags = "yes" -- remove frags too?
+				points = 50
 			},
 
 			refuelStamina = {
@@ -43,7 +42,7 @@
 		config.changeSex.enabled = getBooleanFromString(config.changeSex.enabled)
 
 		config.removeSkull.enabled = getBooleanFromString(config.removeSkull.enabled)
-		config.removeSkull.frags = getBooleanFromString(config.removeSkull.frags)
+		--config.removeSkull.frags = getBooleanFromString(config.removeSkull.frags)
 
 		config.refuelStamina.enabled = getBooleanFromString(config.refuelStamina.enabled)
 
@@ -89,14 +88,14 @@
 					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, not enought points on your account. This rune cost " .. command_points.config.pointsRune.points .. " points.")
 					return true
 				end
- 
+
 				local item = doCreateItemEx(command_points.config.pointsRune.runeId, 1)
 				local status = doPlayerAddItemEx(cid, item, false)
 				if(status ~= RETURNVALUE_NOERROR and status) then
 					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Not enought space for rune.")
 					return true
 				end
- 
+
 				if(doPlayerRemovePoints(cid, command_points.config.pointsRune.points)) then
 					doSendMagicEffect(getCreaturePos(cid), 40)
 					doPlayerSave(cid)
@@ -137,7 +136,7 @@
 					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, not enought points on your account. Change sex cost " .. command_points.config.changeSex.points .. " points.")
 					return true
 				end
- 
+
 				local partner = getPlayerPartner(cid)
 				if(partner and partner ~= 0) then
 					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, you cannot change your sex while being married.")
@@ -156,8 +155,9 @@
 			end,
 
 			removeSkull = function (cid)
-				if(getCreatureSkullType(cid) ~= SKULL_RED) then
-					doPlayerSendCancel(cid, "You do not have red skull.")
+				local skull = getCreatureSkullType(cid)
+				if(skull ~= SKULL_RED and skull ~= SKULL_BLACK) then
+					doPlayerSendCancel(cid, "You do not have red/black skull.")
 					return true
 				end
 
@@ -167,14 +167,11 @@
 				end
 
 				if(doPlayerRemovePoints(cid, command_points.config.pointsRune.points)) then
-					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, "Your red skull has been taken off!\nRemaining premium points: " .. getPlayerPoints(cid))
+					db.executeQuery("UPDATE killers SET unjustified = 0 WHERE id IN (SELECT kill_id FROM player_killers WHERE player_id = " .. getPlayerGUID(cid) .. ")")
 					doCreatureSetSkullType(cid, SKULL_NONE)
-					command_points.logAction("removeSkull: " .. getCreatureName(cid))
-					if(command_points.config.removeSkull.frags) then
-						doPlayerSetRedSkullTicks(cid, 0)
-					end
-
+					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, "Your skull has been taken off!\nRemaining premium points: " .. getPlayerPoints(cid))
 					doSendMagicEffect(getPlayerPosition(cid), CONST_ME_YELLOW_RINGS)
+					command_points.logAction("removeSkull: " .. getCreatureName(cid))
 				else
 					doPlayerSendCancel(cid, "ERROR. Please try again later.")
 				end
@@ -205,7 +202,7 @@
 				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You have " .. getPlayerPoints(cid) .. " points at your account.")
 				return true
 			end
- 
+
 			param = param:lower():trim()
 			if(command_points.config.changeName.enabled and isInArray({"name", "namelock", "changename"}, param)) then
 				command_points.changeName(cid)
@@ -267,11 +264,11 @@
 
 			return true
 		end
-	]]></action> 
- 
-	<item id="2294" article="a" name="points rune" override="yes"> 
-		<attribute key="runeSpellName" value="Points Rune"/> 
-		<attribute key="weight" value="120"/> 
-		<attribute key="description" value="50 points. Use it on self or other player to add points."/> 
-	</item> 
+	]]></action>
+
+	<item id="2294" article="a" name="points rune" override="yes">
+		<attribute key="runeSpellName" value="Points Rune"/>
+		<attribute key="weight" value="120"/>
+		<attribute key="description" value="50 points. Use it on self or other player to add points."/>
+	</item>
 </mod>
