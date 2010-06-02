@@ -1,0 +1,15 @@
+ * command-bank
+  * Bank account management.
+  * !bank balance
+  * !bank deposit `[`amount`]`
+  * !bank withdraw `[`amount`]`
+  * !bank transfer name `[`amount`]`
+  * `[`amount`]` = all if nothing specified
+
+ * experience-logger
+  * Powergamers script.
+  * table: player_experience (player_id, experience, date)
+
+ * ip-logger
+  * Saving player login/logout actions.
+  * table: ip_logger (player_id, ip, where (1 - server, 2 - website), type (1 - login, 2 - logout), date)
