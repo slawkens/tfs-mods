@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="experience-rune" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="experience-rune-config"><![CDATA[
+		amount = 1 -- how many levels player get with every use
+		limit = 0 -- maximum level gained with this rune, 0 to disable
+	]]></config>
+
+	<action itemid="2297"><![CDATA[
+		domodlib('experience-rune-config')
+
+		local config = {
+			amount = amount,
+			limit = limit
+		}
+
+		function onUse(cid, item, fromPosition, itemEx, toPosition)
+			local owner = getItemAttribute(item.uid, 'experienceRuneOwner')
+			if(owner) then
+				local guid = owner
+				if(not isNumber(owner)) then
+					guid = getPlayerGUIDByName(owner)
+				end
+
+				if(getPlayerGUID(cid) ~= guid) then
+					doPlayerSendCancel(cid, "The rune can be only used by " .. getPlayerNameByGUID(guid) .. ".")
+					return true
+				end
+			end
+
+			if(config.limit > 0 and getPlayerLevel(cid) >= limit) then
+				doPlayerSendCancel(cid, "You cannot use this rune anymore.")
+				return true
+			end
+
+			doPlayerAddExperience(cid, getExperienceForLevel(getPlayerLevel(cid) + config.amount) - getPlayerExperience(cid))
+			doChangeTypeItem(item.uid, item.type - 1)
+			return true
+		end
+	]]></action>
+
+	<item id="2297" article="a" name="experience rune" override="yes">
+		<!--attribute key="runeSpellName" value="+1 level"/-->
+		<attribute key="weight" value="120"/>
+		<attribute key="charges" value="1"/>
+	</item>
+</mod>
