@@ -11,11 +11,14 @@ Many of these have still version 1.0, because they were never released to the pu
 || [http://tfs-mods.googlecode.com/svn/trunk/anti-trap.xml anti-trap] || 1.3 || _New command *!noob* which will prevent blocking by noobs._||
 || [http://tfs-mods.googlecode.com/svn/trunk/ballista.xml ballista] || 1.0 || _Showing a nice realistic effect when using ballista._||
 || [http://tfs-mods.googlecode.com/svn/trunk/command-buy.xml command-buy] || 1.0 || _New command *!buy* - buying items with gold coins._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/command-bank.xml command-bank] || 1.0 || _Bank management via commands._||
 || [http://tfs-mods.googlecode.com/svn/trunk/command-exp.xml command-exp] || 1.0 || _New command *!exp* displaying experience needed to advance._||
 || [http://tfs-mods.googlecode.com/svn/trunk/command-ip.xml command-ip] || 1.0 || _New command *!ip* displaying player ip._||
 || [http://tfs-mods.googlecode.com/svn/trunk/command-lua.xml command-lua] || 1.0 || _New command for admins */lua* for executing lua scripts directly from chat window._||
 || [http://tfs-mods.googlecode.com/svn/trunk/command-points.xml command-points] || 1.0 || _Change name, sex, remove skull/stamina for premium points._||
 || [http://tfs-mods.googlecode.com/svn/trunk/command-save.xml command-save] || 1.0 || _New command *!save* for self saving._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/experience-rune.xml experience-rune] || 1.0 || _Gives player experience when used. Configurable limit & amount._||
 || [http://tfs-mods.googlecode.com/svn/trunk/guild-cast.xml guild-cast] || 1.0 || _New command *!gc* for broadcasting guild messages._||
 || [http://tfs-mods.googlecode.com/svn/trunk/guild-outfit.xml guild-outfit] || 1.0 || _New command *!go* for changing outfit of all guild members being online._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/login-history.xml login-history] || 1.0 || _Save player login/logout actions with date & ip._||
 || [http://tfs-mods.googlecode.com/svn/trunk/stop-watch.xml stop-watch] || 1.0 || _Useful tool for counting passed time._||
