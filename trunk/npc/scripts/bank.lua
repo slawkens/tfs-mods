@@ -22,7 +22,9 @@ if(not getPlayerBalance) then
 			return false
 		end
 
-		return tonumber(result:getDataString("balance"))
+		local value = tonumber(result:getDataString("balance"))
+		result:free()
+		return value
 	end
 
 	doPlayerSetBalance = function(cid, balance)
