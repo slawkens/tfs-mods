@@ -18,7 +18,7 @@
 		}
 
 		function onSay(cid, words, param, channel)
-			if(param:trim() == '') then
+			if(param == '') then
 				local str = ""
 				for name, options in pairs(config.items) do
 					str = str .. "\n" .. name

@@ -28,7 +28,7 @@
 
 	<globalevent name="login-history-clean" type="start" event="buffer"><![CDATA[
 		domodlib('login-history-config')
-		db.executeQuery('DELETE FROM login_history WHERE date < ' .. (os.time() - config.expires))
+		db.executeQuery('DELETE FROM login_history WHERE date < ' .. (os.time() - expires))
 		_result = true
 	]]></globalevent>
 </mod>

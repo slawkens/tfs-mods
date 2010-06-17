@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="command-bank" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="command-bank-config"><![CDATA[
+		transferDisabledVocations = {0} -- disable non vocation characters
+	]]></config>
+
+	<talkaction words="!bank" event="script"><![CDATA[
+		domodlib('command-bank-config')
+		local config = {
+			transferDisabledVocations = transferDisabledVocations
+		}
+
+		local function validAmount(amount)
+			return (isNumber(amount) and amount > 0 and amount < 4294967296)
+		end
+		local function getAmount(amount, cid, f)
+			return (amount == 'all' and f(cid) or tonumber(amount))
+		end
+		local function getPlayerVocationByName(name)
+			local result = db.getResult("SELECT `vocation` FROM `players` WHERE `name` = " .. db.escapeString(name))
+			if(result:getID() == -1) then
+				return false
+			end
+
+			local value = result:getDataString("vocation")
+			result:free()
+			return value
+		end
+
+		function onSay(cid, words, param, channel)
+			if(param == '') then
+				doPlayerPopupFYI(cid,
+					"Bank management manual.\n\n" ..
+					"!bank balance - show your account balance\n" ..
+					"!bank deposit 100 - deposit 100 gold\n" ..
+					"!bank withdraw 50 - withdraw 50 gold\n" ..
+					"!bank transfer 30 God - transfer 30 gold to player God\n\n" ..
+					"Tip: you can also use 'all' as amount.\n" ..
+					"!bank deposit all - deposit all gold you have\n" ..
+					"!bank withdraw all - withdraw all gold from your bank account"
+				)
+				return true
+			end
+
+			local t = string.explode(param, " ", 2)
+			local command = t[1]:lower()
+			if(command == 'balance') then
+				doPlayerSendCancel(cid, "Your account balance is " .. getPlayerBalance(cid) .. " gold.")
+			elseif(command == 'deposit') then
+				if(not t[2]) then
+					doPlayerSendCancel(cid, "Amount is required.")
+					return true
+				end
+
+				local amount = getAmount(t[2], cid, getPlayerMoney)
+				if(validAmount(amount) and getPlayerMoney(cid) >= amount and doPlayerDepositMoney(cid, amount)) then
+					doPlayerSendCancel(cid, amount .. " gold has been deposited.")
+				else
+					doPlayerSendCancel(cid, "Not enough money to deposit.")
+				end
+			elseif(command == 'withdraw') then
+				if(not t[2]) then
+					doPlayerSendCancel(cid, "Amount is required.")
+					return true
+				end
+
+				local amount = getAmount(t[2], cid, getPlayerBalance)
+				if(validAmount(amount) and getPlayerBalance(cid) >= amount and doPlayerWithdrawMoney(cid, amount)) then
+					doPlayerSendCancel(cid, amount .. " gold has been withdrawn.")
+				else
+					doPlayerSendCancel(cid, "Not enough money to withdraw.")
+				end
+			elseif(command == 'transfer') then
+				if(not t[2]) then
+					doPlayerSendCancel(cid, "Amount is required.")
+					return true
+				end
+
+				if(not t[3]) then
+					doPlayerSendCancel(cid, "Player name to transfer is required.")
+					return true
+				end
+
+				local amount, target = tonumber(t[2]), t[3]
+				if(getPlayerGUID(cid) == getPlayerGUIDByName(target)) then
+					doPlayerSendCancel(cid, "You cannot transfer money to yourself.")
+				elseif(isInArray(config.transferDisabledVocations, getPlayerVocation(cid))) then
+					doPlayerSendCancel(cid, "Your vocation cannot transfer money.")
+				elseif(not validAmount(amount) or getPlayerBalance(cid) < amount) then
+					doPlayerSendCancel(cid, "Not enough money to transfer.")
+				else
+					local targetVocation = getPlayerVocationByName(target)
+					if(not playerExists(target) or not targetVocation or isInArray(config.transferDisabledVocations, targetVocation) or not doPlayerTransferMoneyTo(cid, target, amount)) then
+						doPlayerSendCancel(cid, "This player does not exist on this world or have no vocation.")
+					else
+						doPlayerSendCancel(cid, "You have transferred " .. amount .. " gold to \"" .. target .."\".")
+					end
+				end
+			else
+				doPlayerSendCancel(cid, "Invalid command usage. Use '!bank' to view manual.")
+			end
+
+			return true
+		end
+	]]></talkaction>
+</mod>
