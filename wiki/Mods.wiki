@@ -22,3 +22,4 @@ Many of these have still version 1.0, because they were never released to the pu
 || [http://tfs-mods.googlecode.com/svn/trunk/guild-outfit.xml guild-outfit] || 1.0 || _New command *!go* for changing outfit of all guild members being online._||
 || [http://tfs-mods.googlecode.com/svn/trunk/login-history.xml login-history] || 1.0 || _Save player login/logout actions with date & ip._||
 || [http://tfs-mods.googlecode.com/svn/trunk/stop-watch.xml stop-watch] || 1.0 || _Useful tool for counting passed time._||
+|| [http://tfs-mods.googlecode.com/svn/trunk/player_expreience.xml player_exp] || || 1.0 || || Useful script to get player id/exp/last login/name || 
