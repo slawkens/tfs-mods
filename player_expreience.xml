@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="player_expreience"  enabled="yes">
+	<config name="config"><![CDATA[
+		config = {
+			maxPlayers = 10
+		}
+	]]></config>
+	<talkaction words="!exp" event="script"><![CDATA[
+		domodlib("config")
+		local final, result = "", db.getResult("SELECT * FROM `players` WHERE `name` != 'Account Manager';");
+		if result:getID() ~= -1 then
+			local i = 1
+			while true do
+				final = final .. "[" .. result:getDataInt("id") .. "] = \"" .. result:getDataString("name") .. "\" - Exp: " .. result:getDataInt("experience") .. ", Last Login: " .. os.date("%H:%M:%S", result:getDataInt("lastlogin")) .. "\n"
+				i = i + 1
+				if not result:next() or i > config.maxPlayers then
+					break
+				end
+			end
+			result:free()
+			return doShowTextDialog(cid, 2160, final)
+		end
+		return true
+	]]></talkaction>
+</mod>
