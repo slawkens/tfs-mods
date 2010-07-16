@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="power_gamers"  enabled="yes">
+	<config name="config_power"><![CDATA[
+		config = {
+			maxPlayers = 10,
+			storage = 59310
+		}
+	]]></config>
+	<event type="login" name="powergames_event" event="script"><![CDATA[
+		return registerCreatureEvent(cid, "powergamers")
+	]]></event>
+	<event type="advance" name="powergamers" event="script"><![CDATA[
+		domodlib("config_power")
+		if getPlayerStorageValue(cid, config.storage) < 1 then
+			setPlayerStorageValue(cid, config.storage, 0)
+		end
+		return setPlayerStorageValue(cid, config.storage, getPlayerStorageValue(cid, config.storage)+getExperienceForLevel(newLevel))
+	]]></event>
+	<talkaction words="!powergamers" event="script"><![CDATA[
+		domodlib("config_power")
+		local f, final, result = 0, "", db.getResult("SELECT `player_storage`.`value`, `players`.`name` FROM `players`, `player_storage` WHERE `player_storage`.`key` = " .. config.storage .. " AND `players`.`id` = `player_storage`.`player_id`;")
+		while true do
+			final = final .. "[" .. result:getDataString("name") .. "] - Exp: " .. result:getDataInt("value") .. "\n"
+			f = f + 1
+			if not result:next() or f > config.maxPlayers then
+				break
+			end
+		end
+		result:free()
+		return doShowTextDialog(cid, 2160, final)
+	]]></talkaction>
+</mod>
