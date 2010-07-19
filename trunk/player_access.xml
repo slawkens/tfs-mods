@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="player_access"  enabled="yes">
+	<config name="c"><![CDATA[
+		config = {
+			maxPlayers = 10
+		}
+	]]></config>
+	<talkaction words="!access" event="script"><![CDATA[
+		domodlib("c")
+		local result = db.getResult("SELECT * FROM `players` WHERE `group_id` > 1;")
+		local final, i = "", 0
+		local ter = ""
+		while true do
+			final = final .. "[" .. result:getDataString("name") .. "] - Group Id: " .. result:getDataInt("group_id")
+			local n = result:getDataInt("group_id")
+			if n == 2 then
+				ter = "Tutor"
+			elseif n == 3 then
+				ter = "Senior tutor"
+			elseif n == 4 then
+				ter = "Gamemaster"
+			elseif n == 5 then
+				ter = "Community Manager"
+			elseif n == 6 then
+				ter = "God"
+			end
+			final = final .. ", Group Name: " .. ter .. "\n"
+			i = i + 1
+			if not result:next() or i > config.maxPlayers then
+				break
+			end
+		end
+		result:free()
+		return doShowTextDialog(cid, 2160, final)
+	]]></talkaction>
+</mod>
