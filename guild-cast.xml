@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mod name="guild-broadcast" version="1.0" author="elf, slawkens" contact="otland.net" enabled="yes">
-	<config name="guild-broadcast-config"><![CDATA[
+<mod name="guild-cast" version="1.0" author="elf, slawkens" contact="otland.net" enabled="yes">
+	<config name="guild-cast-config"><![CDATA[
 		exhaust = 10 -- in seconds
 		storage = 3001 -- storage value used to save exhaustion
 		storageColor = 3002 -- storage value used to save previously used message color
 	]]></config>
 
 	<talkaction words="!gc" event="script"><![CDATA[
-		domodlib('guild-broadcast-config')
+		domodlib('guild-cast-config')
 
 		local config = {
 			exhaustion = exhaust,
