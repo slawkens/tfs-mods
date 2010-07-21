@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="Capture The Flag" enabled="yes">
+	<description>
+		[[
+		@actionids:
+			actionid 6000:
+				red team
+			actionid 6001:
+				blue team
+		@fromPos
+			@toPos:
+				fromPos top left position
+				toPos buttom right position
+		@redPlayers, bluePlayers, redGoal, blueGoal:
+			all are storages
+		@ctf {
+			@redPos:
+				red team position (where they get teleported when they die)
+			@bluePos:
+				blue team position (/// same)
+		}
+		@temple:
+			temple position.
+		]]
+	</description>
+	<config name="ctf_config"><![CDATA[
+		waitingRoom = {
+			fromPos = {x = 1005, y = 1018, z = 7},
+			toPos = {x = 1015, y = 1025, z = 7}
+		}
+		redPlayers = 1200
+		bluePlayers = 2200
+
+		redGoal = 3200
+		blueGoal = 4200
+
+		redFlag = 5200
+		blueFlag = 5520
+
+		ctf = {
+			redPos = {x = 1009, y = 1014, z = 7},
+			bluePos = {x = 1009, y = 1009, z = 7}
+		}
+
+		temple = {x = 1020, y = 1021, z = 7}
+	]]></config>
+	<globalevent name="onstartup_ctf" type="start" event="script"><![CDATA[
+		domodlib("ctf_config")
+		setGlobalStorageValue(redGoal, 0)
+		setGlobalStorageValue(blueGoal, 0)
+		setGlobalStorageValue(redFlag, -1)
+		setGlobalStorageValue(blueFlag, -1)
+		db.executeQuery("DELETE FROM `player_storage` WHERE `key` = " .. redFlag .. ";")
+		db.executeQuery("DELETE FROM `player_storage` WHERE `key` = " .. blueFlag .. ";")
+		db.executeQuery("DELETE FROM `player_storage` WHERE `key`= " .. redPlayers .. ";")
+		db.executeQuery("DELETE FROM `player_storage` WHERE `key` = " .. bluePlayers .. ";")
+		return true
+	]]></globalevent>
+	<globalevent name="start_ctf" interval="120000" event="script"><![CDATA[
+		domodlib("ctf_config")
+	local red, blue = {}, {}
+	local conditionBlue =  createConditionObject(CONDITION_OUTFIT)
+		setConditionParam(conditionBlue, CONDITION_PARAM_TICKS, 1800 * 1000)
+		addOutfitCondition(conditionBlue, {lookType = 130, lookHead = 87, lookBody = 87, lookLegs = 87, lookFeet = 87})
+	local conditionRed = createConditionObject(CONDITION_OUTFIT)
+		setConditionParam(conditionRed, CONDITION_PARAM_TICKS, 1800 * 1000)
+		addOutfitCondition(conditionRed, {lookType = 130, lookHead = 94, lookBody = 94, lookLegs = 94, lookFeet = 94})
+
+	local function getPlayers(from, to)
+		local list = {}
+		for x = from.x, to.x do
+			for y = from.y, to.y do
+				for z = from.z, to.z do
+					local creature = getTopCreature({x =x , y =y, z = z}).uid
+					if isPlayer(creature) then
+						table.insert(list, creature)
+					end
+				end
+			end
+		end
+		return list
+	end
+	local function finishThis()
+		local t = getPlayers(waitingRoom.fromPos, waitingRoom.toPos)
+		if #t == 1 then
+			doPlayerSendTextMessage(t[1], 27, "Find another player to play with.")
+			doTeleportThing(t[1], temple, true)
+		elseif #t == 2 then
+			table.insert(red, t[1])
+			table.insert(blue, t[2])
+		elseif #t == 3 then
+			table.insert(red, t[2])
+			table.insert(blue, t[3])
+			table.insert(red, t[1])
+		elseif #t == 4 then
+			table.insert(red, t[1])
+			table.insert(blue, t[2])
+			table.insert(red, t[3])
+			table.insert(blue, t[4])
+		elseif #t >= 5 then
+			for _, v in ipairs(t) do
+				if math.random(20) < 2 then
+					table.insert(red, v)
+				else
+					table.insert(blue, v)
+				end
+			end
+		end
+		if #red > 0 and #blue > 0 then
+			for _, r in ipairs(red) do
+				setPlayerStorageValue(r, redPlayers, 1)
+				doAddCondition(r, conditionRed)
+				doTeleportThing(r, ctf.redPos, true)
+				red = {}
+			end
+			for _, b in ipairs(blue) do
+				setPlayerStorageValue(b, bluePlayers, 1)
+				doAddCondition(b, conditionBlue)
+				doTeleportThing(b, ctf.bluePos, true)
+				blue = {}
+			end
+		end
+		return true
+	end
+	local function teleport()
+		addEvent(doBroadcastMessage, 1000, "Capture The Flag will begin in 2 minutes.")
+		addEvent(doBroadcastMessage, 60 * 1000, "Capture The Flag will begin in 1 minute.")
+		addEvent(doBroadcastMessage, 120 * 1000, "Capture The Flag will begin now.")
+		addEvent(finishThis, 120 * 1000)
+	end
+	function onThink(interval)
+		return teleport()
+	end
+	]]></globalevent>
+	<event type="login" name="ctf_login" event="script"><![CDATA[
+		registerCreatureEvent(cid, "ctf_stats")
+		return registerCreatureEvent(cid, "ctf_target")
+	]]></event>
+	<event type="statschange" name="ctf_stats" event="script"><![CDATA[
+		domodlib("ctf_config")
+	function onStatsChange(cid, attacker, type, combat, value)
+		if type == 1 then
+			if getCreatureHealth(cid) <= value then
+				if isPlayer(cid) and isCreature(attacker) then
+					if getPlayerStorageValue(cid, redFlag) == 1 then
+						setPlayerStorageValue(cid, redFlag, -1)
+						setGlobalStorageValue(redFlag, -1)
+						doBroadcastMessage(getCreatureName(cid) .. " has dropped the red flag!")
+					elseif getPlayerStorageValue(cid, blueFlag) == 1 then
+						setPlayerStorageValue(cid, blueFlag, -1)
+						setGlobalStorageValue(blueFlag, -1)
+						doBroadcastMessage(getCreatureName(cid) .. " has dropped the blue flag!")
+					end
+					if getPlayerStorageValue(cid, redPlayers) == 1 then
+						doTeleportThing(cid, ctf.redPos, true)
+						doCreatureAddHealth(cid, getCreatureMaxHealth(cid), false)
+						doCreatureAddMana(cid, getCreatureMaxMana(cid), false)
+						return false
+					elseif getPlayerStorageValue(cid, bluePlayers) == 1 then
+						doTeleportThing(cid, ctf.bluePos, true)
+						doCreatureAddHealth(cid, getCreatureMaxHealth(cid), false)
+						doCreatureAddMana(cid, getCreatureMaxMana(cid), false)
+						return false
+					end
+				end
+			end
+		end
+		return true
+	end
+	]]></event>
+	<event type="combat" name="ctf_target" event="script"><![CDATA[
+		domodlib("ctf_config")
+		if isPlayer(cid) and isPlayer(target) then
+			if(getPlayerStorageValue(cid, redPlayers) == 1 and getPlayerStorageValue(target, redPlayers) == 1) or (getPlayerStorageValue(cid, bluePlayers) == 1 and getPlayerStorageValue(target, bluePlayers) == 1) then
+				return doPlayerSendCancel(cid, "You may not attack your team mates.")
+			end
+		end
+		return true
+	]]></event>
+	<movevent type="StepIn" actionid="6000-6001" event="script"><![CDATA[
+		domodlib("ctf_config")
+	local function repeatFlag(cid)
+		local k = getThingPos(cid)
+		local r = {
+			{pos = {x = k.x + 2, y = k.y - 2, z = k.z}, delay = 300},
+			{pos = {x = k.x + 2, y = k.y + 2, z = k.z}, delay = 300},
+			{pos = {x = k.x - 2, y = k.y + 2, z = k.z}, delay = 300},
+			{pos = {x = k.x - 2, y = k.y, z = k.z}, delay = 300},
+			{pos = {x = k.x - 2, y = k.y - 2, z = k.z}, delay = 300},
+			{pos = {x = k.x, y = k.y - 2, z = k.z}, delay = 300}
+		}
+		local effects = {27, 28, 29, 30}
+		if getPlayerStorageValue(cid, redFlag) == 1 or getPlayerStorageValue(cid, blueFlag) == 1 then
+			for i = 1, 6 do
+				addEvent(doSendDistanceShoot, r[i].delay, r[i].pos, k, CONST_ME_FIREWORK_YELLOW)
+			end
+			for i = 1, 4 do
+				addEvent(doSendMagicEffect, 1000, getThingPos(cid), effects[i])
+			end
+			return addEvent(repeatFlag, 2 * 1000, cid)
+		end
+		return true
+	end
+	function onStepIn(cid, item, position, fromPosition, toPosition, lastPosition, actor)
+		if isPlayer(cid) then
+			if item.actionid == 6000 then --red team
+				if getPlayerStorageValue(cid, bluePlayers) == 1 then
+					if getPlayerStorageValue(cid, redFlag) == -1 and getGlobalStorageValue(redFlag) == -1 then
+						setPlayerStorageValue(cid, redFlag, 1)
+						setGlobalStorageValue(redFlag, 1)
+						doBroadcastMessage(getCreatureName(cid) .. " has stolen the Red Flag!")
+						repeatFlag(cid)
+					else
+						doCreatureSay(cid, "The flag is not at home!", 19)
+						doTeleportThing(cid, fromPosition)
+					end
+				elseif getPlayerStorageValue(cid, redPlayers) == 1 then
+					if getGlobalStorageValue(redFlag) == -1 then
+						if getPlayerStorageValue(cid, blueFlag) == 1 and getGlobalStorageValue(blueFlag) == 1 then
+							setPlayerStorageValue(cid, blueFlag, -1)
+							setGlobalStorageValue(blueFlag, -1)
+							doBroadcastMessage(getCreatureName(cid) .. " has scored 1 point to the Red Team!")
+							setGlobalStorageValue(redGoal, getGlobalStorageValue(redGoal)+1)
+							doBroadcastMessage("Current CTF Game Score:\nRed Team: " .. getGlobalStorageValue(redGoal) .. "\nBlue Team: " .. getGlobalStorageValue(blueGoal) .. "\nTen scores to win!", 19)
+						else
+							doCreatureSay(cid, "You dont have the flag!", 19)
+							doTeleportThing(cid, fromPosition)
+						end
+					else
+						doCreatureSay(cid, "Return your flag firstly", 19)
+						doTeleportThing(cid, fromPosition)
+					end
+				else
+					doPlayerSendTextMessage(cid, 27, "Your not in any team, try reporting this to gamemaster?")
+					doTeleportThing(cid, temple, true)
+				end
+			elseif item.actionid == 6001 then --blue team
+				if getPlayerStorageValue(cid, redPlayers) == 1 then
+					if getPlayerStorageValue(cid, blueFlag) == -1 and getGlobalStorageValue(blueFlag) == -1 then
+						setPlayerStorageValue(cid, blueFlag, 1)
+						setGlobalStorageValue(blueFlag, 1)
+						doBroadcastMessage(getCreatureName(cid) .. " has stolen the Blue Flag!")
+						repeatFlag(cid)
+					else
+						doCreatureSay(cid, "The flag is not at home!", 19)
+						doTeleportThing(cid, fromPosition)
+					end
+				elseif getPlayerStorageValue(cid, bluePlayers) == 1 then
+					if getGlobalStorageValue(blueFlag) == -1 then
+						if getPlayerStorageValue(cid, redFlag) == 1 and getGlobalStorageValue(redFlag) == 1 then
+							setPlayerStorageValue(cid, redFlag, -1)
+							setGlobalStorageValue(redFlag, -1)
+							doBroadcastMessage(getCreatureName(cid) .. " has scored 1 point to Blue Team!")
+							setGlobalStorageValue(blueGoal, getGlobalStorageValue(blueGoal)+1)
+							doBroadcastMessage("Current CTF Game Score:\nRed Team: " .. getGlobalStorageValue(redGoal) .. "\nBlue Team: " .. getGlobalStorageValue(blueGoal) .. "\nTen scores to win!", 19)
+						else
+							doCreatureSay(cid, "You dont have the flag!", 19)
+							doTeleportThing(cid, fromPosition)
+						end
+					else
+						doCreatureSay(cid, "Return your flag firstly", 19)
+						doTeleportThing(cid, fromPosition)
+					end
+				else
+					doPlayerSendTextMessage(cid, 27, "Your not in any team, try reporting this to gamemaster?")
+					doTeleportThing(cid, temple, true)
+				end
+			end
+			if getGlobalStorageValue(redGoal) == 10 and getGlobalStorageValue(blueGoal) < 10 then
+				doBroadcastMessage("Red Team has won the event!", 27)
+				for _, cid in ipairs(getPlayersOnline()) do
+					if getPlayerStorageValue(cid, redPlayers) == 1 then
+						doPlayerAddItem(cid, 9020, math.random(1, 15))
+						doTeleportThing(cid, temple, true)
+						doRemoveCondition(cid, CONDITION_OUTFIT)
+					elseif getPlayerStorageValue(cid, bluePlayers) == 1 then
+						doTeleportThing(cid, temple, true)
+						doRemoveCondition(cid, CONDITION_OUTFIT)
+					end
+					if getPlayerStorageValue(cid, redFlag) == 1 then
+						setPlayerStorageValue(cid, redFlag, -1)
+					end
+					if getPlayerStorageValue(cid, blueFlag) == 1 then
+						setPlayerStorageValue(cid, blueFlag, -1)
+					end
+				end
+				setGlobalStorageValue(blueGoal, 0)
+				setGlobalStorageValue(redGoal, 0)
+				setGlobalStorageValue(redFlag, -1)
+				setGlobalStorageValue(blueFlag, -1)
+			elseif getGlobalStorageValue(blueGoal) == 10 and getGlobalStorageValue(redGoal) < 10 then
+				doBroadcastMessage("Blue Team has won the event!", 27)
+				for _, cid in ipairs(getPlayersOnline()) do
+					if getPlayerStorageValue(cid, bluePlayers) == 1 then
+						doPlayerAddItem(cid, 9020, math.random(1, 15))
+						doTeleportThing(cid, temple, true)
+						doRemoveCondition(cid, CONDITION_OUTFIT)
+					elseif getPlayerStorageValue(cid, redPlayers) == 1 then
+						doTeleportThing(cid, temple, true)
+						doRemoveCondition(cid, CONDITION_OUTFIT)
+					end
+					if getPlayerStorageValue(cid, redFlag) == 1 then
+						setPlayerStorageValue(cid, redFlag, -1)
+					end
+					if getPlayerStorageValue(cid, blueFlag) == 1 then
+						setPlayerStorageValue(cid, blueFlag, -1)
+					end
+				end
+				setGlobalStorageValue(blueGoal, 0)
+				setGlobalStorageValue(redGoal, 0)
+				setGlobalStorageValue(redFlag, -1)
+				setGlobalStorageValue(blueFlag, -1)
+			end
+		else
+			doRemoveCreature(cid)
+		end
+		return true
+	end
+	]]></movevent>
+</mod>
