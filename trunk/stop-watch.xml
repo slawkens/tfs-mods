@@ -8,7 +8,7 @@
 		delay = 10 -- how often check if player have still stop watch in his inventory (in seconds, default 10, lower values can slow server)
 	]]></config>
 
-	<action itemid="6091" event="script" override="yes"""><![CDATA[
+	<action itemid="6091" event="script" override="yes"><![CDATA[
 		domodlib('stop-watch-config')
 
 		local config = {
