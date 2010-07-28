@@ -1,3 +1,6 @@
  * experience-logger
-  * Powergamers script. //done
-  * table: player_experience (player_id, experience, date) // done
+  * Powergamers script.
+  * table: player_experience (player_id, experience, date)
+
+ * pvp-arena
+  * lever & creaturevent
