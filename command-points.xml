@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <mod name="command-points" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<config name="command-points-config"><![CDATA[
 		config = {
