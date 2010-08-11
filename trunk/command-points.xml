@@ -61,7 +61,13 @@
 
 		function getAccountPoints(accountId)
 			local result = db.getResult('SELECT premium_points FROM accounts WHERE id = ' .. accountId)
-			return tonumber(result:getDataInt("premium_points"))
+			local v = 0
+			if(result:getID() ~= -1) then
+				v = tonumber(result:getDataInt("premium_points"))
+				result:free()
+			end
+
+			return v
 		end
 
 		function doAccountAddPoints(accountId, points)
@@ -255,7 +261,7 @@
 				return false
 			end
 
-			if(doRemoveItem(item.uid)) then
+			if(doRemoveItem(item.uid), 1) then
 				doPlayerAddPoints(itemEx.uid, command_points.config.pointsRune.points)
 				doSendMagicEffect(toPosition, CONST_ME_BIGCLOUDS)
 				doPlayerSave(cid)
