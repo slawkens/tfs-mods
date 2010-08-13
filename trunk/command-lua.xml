@@ -1,34 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mod name="command-lua" version="1.0" author="slawkens, elf" contact="otland.net" enabled="yes">
-	<talkaction words="/lua" access="5" event="script"><![CDATA[
-		function table.totext(t, i, ingame)
-			i = i or 1
-			ingame = ingame or false
-			local indent = string.rep(ingame and string.rep(" ", 5) or "\t", i)
-			local maxn, str, l = table.maxn(t), "", 0
-			for k, v in pairs(t) do
-				l = l + 1
-				if type(k) == "string" then k = '"'..k..'"' end
-				str = str .. indent .. "[" .. k .. "] = "
-
-				if type(v) == "table" then
-					str = str .. "{\n" .. table.totext(v, i+1, ingame) .. "\n" .. indent .. "}"
-				elseif type(v) == 'boolean' then
-					str = str .. (v and "true" or "false")
-				elseif type(v) == "string" or type(v) == "number" then
-					if type(v) == "string" then v = '"' .. v .. '"' end
-					str = str .. v
-				else
-					str = str .. "_" .. type(v):upper() .. "_"
-				end
-				str = str .. (l<maxn and ",\n" or "")
-			end
-			return str
+	<lib name="command-lua-lib"><![CDATA[
+		if(not table.append) then
+			table.append = table.insert
 		end
 
+		if(not table.totext) then
+			function table.totext(t, i, ingame)
+				i = i or 1
+				ingame = ingame or false
+				local indent = string.rep(ingame and string.rep(" ", 5) or "\t", i)
+				local maxn, str, l = table.maxn(t), "", 0
+				for k, v in pairs(t) do
+					l = l + 1
+					if type(k) == "string" then k = '"'..k..'"' end
+					str = str .. indent .. "[" .. k .. "] = "
+
+					if type(v) == "table" then
+						str = str .. "{\n" .. table.totext(v, i+1, ingame) .. "\n" .. indent .. "}"
+					elseif type(v) == 'boolean' then
+						str = str .. (v and "true" or "false")
+					elseif type(v) == "string" or type(v) == "number" then
+						if type(v) == "string" then v = '"' .. v .. '"' end
+						str = str .. v
+					else
+						str = str .. "_" .. type(v):upper() .. "_"
+					end
+					str = str .. (l<maxn and ",\n" or "")
+				end
+				return str
+			end
+		end
+
+		if(not table.serialize) then
+			function table.serialize(x, recur)
+				local t = type(x)
+				recur = recur or {}
+
+				if(t == nil) then
+					return "nil"
+				elseif(t == "string") then
+					return string.format("%q", x)
+				elseif(t == "number") then
+					return tostring(x)
+				elseif(t == "boolean") then
+					return t and "true" or "false"
+				elseif(getmetatable(x)) then
+					error("Can not serialize a table that has a metatable associated with it.")
+				elseif(t == "table") then
+					if(table.find(recur, x)) then
+						error("Can not serialize recursive tables.")
+					end
+					table.append(recur, x)
+
+					local s = "{"
+					for k, v in pairs(x) do
+						s = s .. "[" .. table.serialize(k, recur) .. "]"
+						s = s .. " = " .. table.serialize(v, recur) .. ","
+					end
+					s = s .. "}"
+					return s
+				else
+					error("Can not serialize value of type '" .. t .. "'.")
+				end
+			end
+		end
+
+		function doSecondsFormat(i)
+			local str, found = string.gsub(i, "(%d)(%d%d%d)$", "%1.%2", 1), 0
+			repeat
+				str, found = string.gsub(str, "(%d)(%d%d%d),", "%1.%2,", 1)
+			until found == 0
+			return str
+		end
+	]]></lib>
+
+	<talkaction words="/lua" access="5" event="script"><![CDATA[
+		domodlib('command-lua-lib')
+
 		function onSay(cid, words, param, channel)
-			param = string.gsub(param, "cid", cid)
-			--local f = assert(loadstring(param))
+			local constants = {
+				["cid"] = cid,
+				["pos"] = getCreaturePosition(cid)
+			}
+
+			for k, v in pairs(constants) do
+				param = k .. " = " .. table.serialize(v) .. " " .. param
+			end
+
+			local started = os.mtime and os.mtime() or os.time()
 			local f = loadstring(param)
 			local status, ret = pcall(f)
 
@@ -45,6 +105,21 @@
 			else
 				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Code executed, without result.")
 			end
+
+			local done, str = os.time() - started, ""
+			if(os.mtime) then
+				done = os.mtime() - started
+				if(done < 100) then
+					str = "0.0" .. done
+				elseif(done < 1000) then
+					str = "0." .. done
+				else
+					str = doSecondsFormat(done)
+					if(str:len() == 0) then str = "0.0" end
+				end
+			end
+
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Done in: " .. str .. "s")
 			return true
 		end
 	]]></talkaction>
