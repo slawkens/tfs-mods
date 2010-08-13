@@ -71,6 +71,10 @@
 		end
 
 		function doAccountAddPoints(accountId, points)
+			if(points < 0 and getAccountPoints(accountId) < math.abs(points)) then
+				return false
+			end
+
 			return db.executeQuery('UPDATE accounts SET premium_points = premium_points + ' .. points .. ' WHERE id = ' .. accountId)
 		end
 
@@ -118,8 +122,9 @@
 					return true
 				end
 
-				if(os.time() < getPlayerStorageValue(cid, command_points.config.changeName.storage) + command_points.config.changeName.delay) then
-					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You can change your name only 1 time per day.")
+				local lastChange = getPlayerStorageValue(cid, command_points.config.changeName.storage)
+				if(os.time() < lastChange + command_points.config.changeName.delay) then
+					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, this command have limited usage. You will be able to use it next time at " .. os.date("%X on %d.%m.%y", lastChange + command_points.config.changeName.delay) .. ".")
 					return true
 				end
 
@@ -176,8 +181,10 @@
 				if(doPlayerRemovePoints(cid, command_points.config.pointsRune.points)) then
 					db.executeQuery("UPDATE killers SET unjustified = 0 WHERE id IN (SELECT kill_id FROM player_killers WHERE player_id = " .. getPlayerGUID(cid) .. ")")
 					doCreatureSetSkullType(cid, SKULL_NONE)
+		            doPlayerSetSkullEnd(cid, 0, skull)
 					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_RED, "Your skull has been taken off!\nRemaining premium points: " .. getPlayerPoints(cid))
 					doSendMagicEffect(getPlayerPosition(cid), CONST_ME_YELLOW_RINGS)
+					doPlayerSave(cid)
 					command_points.logAction("removeSkull: " .. getCreatureName(cid))
 				else
 					doPlayerSendCancel(cid, "ERROR. Please try again later.")
@@ -185,14 +192,20 @@
 			end,
 
 			refuelStamina = function (cid)
+				if(getPlayerPoints(cid) < command_points.config.refuelStamina.points) then
+					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, not enought points on your account. Stamina refill cost " .. command_points.config.refuelStamina.points .. " points.")
+					return true
+				end
+
 				if(getPlayerStamina(cid) >= command_points.config.refuelStamina.full) then
 					doPlayerSendCancel(cid, "Your stamina is already full.")
 				elseif(not isPremium(cid)) then
 					doPlayerSendCancel(cid, "You must have a premium account.")
 				else
-					if(doPlayerRemovePoints(cid, command_points.config.pointsRune.points)) then
+					if(doPlayerRemovePoints(cid, command_points.config.refuelStamina.points)) then
 						doPlayerSetStamina(cid, command_points.config.refuelStamina.full)
 						doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, "Your stamina has been refilled.")
+						doPlayerSave(cid)
 						command_points.logAction("refuelStamina: " .. getCreatureName(cid))
 					else
 						doPlayerSendCancel(cid, "ERROR. Please try again later.")
@@ -206,7 +219,7 @@
 		domodlib('command-points-lib')
 		function onSay(cid, words, param, channel)
 			if(param == '') then
-				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You have " .. getPlayerPoints(cid) .. " points at your account.")
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You have " .. getPlayerPoints(cid) .. " points on your account.")
 				return true
 			end
 
@@ -261,7 +274,7 @@
 				return false
 			end
 
-			if(doRemoveItem(item.uid), 1) then
+			if(doRemoveItem(item.uid, 1)) then
 				doPlayerAddPoints(itemEx.uid, command_points.config.pointsRune.points)
 				doSendMagicEffect(toPosition, CONST_ME_BIGCLOUDS)
 				doPlayerSave(cid)
