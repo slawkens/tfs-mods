@@ -73,6 +73,12 @@ if(not getPlayerBalance) then
 	end
 end
 
+if(not doPlayerSave) then
+	local function doPlayerSave(cid)
+		return true
+	end
+end
+
 local function getPlayerVocationByName(name)
 	local result = db.getResult("SELECT `vocation` FROM `players` WHERE `name` = " .. db.escapeString(name))
 	if(result:getID() == -1) then
@@ -163,6 +169,7 @@ function creatureSayCallback(cid, type, msg)
 				selfSay("You don\'t have enough gold.", cid)
 			else
 				selfSay("Alright, we have added the amount of " .. count[cid] .. " gold to your balance. You can withdraw your money anytime you want to. Your account balance is " .. getPlayerBalance(cid) .. ".", cid)
+				doPlayerSave(cid)
 			end
 		elseif msgcontains(msg, 'no') then
 			selfSay("As you wish. Is there something else I can do for you?", cid)
@@ -189,6 +196,7 @@ function creatureSayCallback(cid, type, msg)
 			else
 				selfSay("Here you are, " .. count[cid] .. " gold. Please let me know if there is something else I can do for you.", cid)
 				talkState[cid] = 0
+				doPlayerSave(cid)
 			end
 		elseif msgcontains(msg, 'no') then
 			selfSay("As you wish. Is there something else I can do for you?", cid)
@@ -242,6 +250,7 @@ function creatureSayCallback(cid, type, msg)
 			else
 				selfSay("You have transferred " .. count[cid] .. " gold to \"" .. transfer[cid] .."\".", cid)
 				transfer[cid] = nil
+				doPlayerSave(cid)
 			end
 		elseif msgcontains(msg, 'no') then
 			selfSay("As you wish. Is there something else I can do for you?", cid)
