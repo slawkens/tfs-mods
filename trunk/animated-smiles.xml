@@ -5,7 +5,7 @@
 		storage = 3000 -- storage value used to save exhaustion
 	]]></config>
 
-	<talkaction words="xd, :d, ;d, =d, xp, :p, ;p, =p, :o, ;o, ;s, :s, :/, ;/, :*, ;*, =*, :>, ;>, :), ;), =), :(, ;(, =(, :[, ;[, :], ;], :@, ;@, ^^, ^.^, -.-" separator="," log="no" case-sensitive="no" event="script"><![CDATA[
+	<talkaction words="xd, :d, ;d, =d, xp, :p, ;p, =p, :o, ;o, ;s, :s, :/, ;/, :*, ;*, =*, :>, ;>, :), ;), =), :(, ;(, =(, :[, ;[, :], ;], :@, ;@, ^^, ^.^, -.-" separator="," logged="no" hidden="yes" case-sensitive="no" event="script"><![CDATA[
 		domodlib('animated-smiles-config')
 
 		local config = {
