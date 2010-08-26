@@ -81,7 +81,8 @@
 		function onSay(cid, words, param, channel)
 			local constants = {
 				["cid"] = cid,
-				["pos"] = getCreaturePosition(cid)
+				["pos"] = getCreaturePosition(cid),
+				["c"] = getCreatureByName
 			}
 
 			for k, v in pairs(constants) do
