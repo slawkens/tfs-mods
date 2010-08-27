@@ -82,24 +82,24 @@
 			local constants = {
 				["cid"] = cid,
 				["pos"] = getCreaturePosition(cid),
-				["c"] = getCreatureByName
+				["c"] = "getCreatureByName"
 			}
 
 			for k, v in pairs(constants) do
-				param = k .. " = " .. table.serialize(v) .. " " .. param
+				param = k .. " = " .. (type(v) == 'string' and v or table.serialize(v)) .. " " .. param
 			end
 
 			local started = os.mtime and os.mtime() or os.time()
 			local f = loadstring(param)
 			local status, ret = pcall(f)
 
-			local ret_type = type(ret)
-			if(table.isStrIn(ret_type, {'number', 'string', 'boolean', 'table', 'function'})) then
+			local t = type(ret)
+			if(table.isStrIn(t, {'number', 'string', 'boolean', 'table', 'function'})) then
 				if(ret == true or ret == false) then
 					ret = tostring(ret)
-				elseif(ret_type == 'table') then
+				elseif(t == 'table') then
 					ret = '(table)\n' .. table.totext(ret, 1, true)
-				elseif(ret_type == 'function') then
+				elseif(t == 'function') then
 					ret = 'function'
 				end
 				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Result: " .. ret)
