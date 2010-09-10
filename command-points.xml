@@ -167,7 +167,7 @@
 
 			removeSkull = function (cid)
 				if(getPlayerPoints(cid) < command_points.config.removeSkull.points) then
-					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, not enought points on your account. Remove skull cost " .. command_points.config.removeFrags.points .. " points.")
+					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Sorry, not enought points on your account. Remove skull cost " .. command_points.config.removeSkull.points .. " points.")
 					return true
 				end
 
