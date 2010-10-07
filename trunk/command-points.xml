@@ -135,8 +135,8 @@
 				if(doPlayerRemovePoints(cid, command_points.config.changeName.points)) then
 					setPlayerStorageValue(cid, command_points.config.changeName.storage, os.time())
 					doAddPlayerBanishment(getCreatureName(cid), BAN_PLAYER, -1, ACTION_NAMELOCK)
-					doRemoveCreature(cid)
 					command_points.logAction("changeName: " .. getCreatureName(cid))
+					doRemoveCreature(cid)
 				else
 					doPlayerSendCancel(cid, "ERROR. Please try again later.")
 				end
