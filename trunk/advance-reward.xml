@@ -2,7 +2,7 @@
 <mod name="advance-reward" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<config name="advance-reward-config"><![CDATA[
 		rewards = {
-			{skill = SKILL_LEVEL, level = 100, storage = 3100, item = 2160, count = 30},
+			{skill = SKILL__LEVEL, level = 100, storage = 3100, item = 2160, count = 30},
 			{skill = SKILL_FISHING, level = 20, storage = 3101, item = 3976, count = 100}
 			-- more examples
 			--{skill = SKILL_SWORD, level = 110, storage = 3102, item = 2400, message = "Take this as a reward for advancing in 120 sword fighting level!", effect = 61}
