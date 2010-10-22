@@ -7,8 +7,7 @@
 			-- more examples
 			--{skill = SKILL_SWORD, level = 110, storage = 3102, item = 2400, message = "Take this as a reward for advancing in 120 sword fighting level!", effect = 61}
 
-			--[[
-			items in a backpack
+			--[[ items in a backpack
 			{skill = SKILL__LEVEL, level = 50, storage = 3103, item = 2000,
 				inside = {
 					{id = 2160, count = 1},
@@ -16,6 +15,23 @@
 					{id = 2195}
 				}
 			}
+			]]--
+
+			--[[ only for specified vocations (in this case - sorcerers & druids)
+			{skill = SKILL_AXE, level = 50, storage = 3104, item = 7884,
+				callback = function(cid, reward)
+					return isInArray({1, 2, 5, 6}, getPlayerVocation(cid))
+				end
+			}
+			]]--
+
+			--[[ this one will only broadcast message (without giving any reward)
+			{skill = SKILL__LEVEL, level = 300, storage = 3105, message = false,
+				callback = function(cid, reward)
+					doBroadcastMessage(getCreatureName(cid) .. " has advanced to Level 300. Congratulations!", MESSAGE_EVENT_ADVANCE)
+					return true
+				end
+			},
 			]]--
 		}
 
@@ -40,42 +56,55 @@
 				if(reward.skill == skill and newLevel >= reward.level
 					and getPlayerStorageValue(cid, reward.storage) ~= 1)
 				then
-					if(not reward.inside) then
-						if(doPlayerAddItem(cid, reward.item, reward.count or 1) == false) then
-							return true
+					if(not reward.callback or reward.callback(cid, reward)) then
+						local continue = true
+
+						if(not reward.inside) then
+							if(reward.item and doPlayerAddItem(cid, reward.item, reward.count or 1) == false) then
+								continue = false
+							end
+						elseif(isItemContainer(reward.item)) then
+							local container = doCreateItemEx(reward.item, 1)
+							for _, item in ipairs(reward.inside) do
+								doAddContainerItem(container, item.id, item.count or 1)
+							end
+
+							if(doPlayerAddItemEx(cid, container, false) ~= RETURNVALUE_NOERROR) then
+								continue = false
+							end
 						end
-					elseif(isItemContainer(reward.item)) then
-						local container = doCreateItemEx(reward.item, 1)
-						for _, item in ipairs(reward.inside) do
-							doAddContainerItem(container, item.id, item.count or 1)
+
+						if(continue) then
+							setPlayerStorageValue(cid, reward.storage, 1)
+
+							local message = reward.message or config.message
+								if(type(reward.message) == 'boolean') then
+									message = reward.message
+								end
+
+							if(message) then
+								local t = {
+									["NAME"] = getCreatureName(cid),
+									["SKILL"] = SKILL_NAMES[skill],
+									["OLDLEVEL"] = oldLevel,
+									["NEWLEVEL"] = newLevel,
+									["LEVEL"] = reward.level
+								}
+								if(reward.item) then
+									t["ITEM"] = getItemNameById(reward.item)
+								end
+
+								doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, tostring(message:gsub("{(.-)}", function(v) return t[v] end)))
+							end
+
+							local effect = reward.effect or config.effect
+							if(effect) then
+								doSendMagicEffect(getCreaturePosition(cid), effect)
+							end
 						end
-
-						if(doPlayerAddItemEx(cid, container, false) ~= RETURNVALUE_NOERROR) then
-							return true
-						end
-					end
-
-					setPlayerStorageValue(cid, reward.storage, 1)
-
-					local message = reward.message or config.message
-					if(message) then
-						local t = {
-							["NAME"] = getCreatureName(cid),
-							["SKILL"] = SKILL_NAMES[skill],
-							["OLDLEVEL"] = oldLevel,
-							["LEVEL"] = newLevel,
-							["ITEM"] = getItemNameById(reward.item)
-						}
-						doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, tostring(message:gsub("{(.-)}", function(v) return t[v] end)))
-					end
-
-					local effect = reward.effect or config.effect
-					if(effect) then
-						doSendMagicEffect(getCreaturePosition(cid), effect)
 					end
 				end
 			end
-
 			return true
 		end
 	]]></event>
