@@ -2,13 +2,21 @@
 <mod name="annihilator" version="1.0" author="The Forgotten Server" contact="otland.net" enabled="yes">
 	<config name="annihilator-config"><![CDATA[
 		levers = {
+			-- About array format:
+			--     unique id for the switch => quest info
+			-- also don't forget to add this unique id few lines bottom in "<action" tag when adding new quests
 			[30015] = {
 				-- daily limit (one team only) like in global Tibia?
 				daily = "no",
+
 				minLevel = 100, -- level required
+
 				-- Storage used to determine if player have already done this quest
+				-- use -1 to ignore quest status (peoples will be able to help each other to finish the quest)
+				-- also remember to set same unique id for quest boxes, so it will be determined properly
 				questStorage = 30015,
 
+				-- you can use as many you wish, just be sure that playerPositions size is same as newPositions, otherwise there many be problems when teleporting players
 				playerPositions =
 				{
 					{x = 2858, y = 651, z = 13},
@@ -25,7 +33,10 @@
 					{x = 2862, y = 641, z = 13}
 				},
 
-				-- Position of monsters, used to delete them when new team want do quest, only if 'daily' enabled
+				-- Following options are available only when you have enabled 'daily' option, if you didn't - just ignore them
+
+				-- Position of monsters, used to delete them when new team want do quest
+				-- these positions are used to automatically clean unkilled monsters when new team arrives
 				monsters =
 				{
 					{{x = 2859, y = 639, z = 13}, "Demon"},
@@ -36,7 +47,7 @@
 					{{x = 2862, y = 643, z = 13}, "Demon"}
 				},
 
-				-- Position and ID of doors, which will be auto-closed, only if 'daily' enabled
+				-- Position and ID of doors, which will be auto-closed
 				doorPosition = {x = 2865, y= 641, z = 13},
 				doorId = 1219
 			}
@@ -100,14 +111,16 @@
 				end
 			end
 
-			for _, monster in pairs(config.monsters) do
-				local creature = getTopCreature(monster[1]).uid
-				if(creature > 0 and not isPlayer(creature)) then
-					doRemoveCreature(creature)
-				end
+			if(config.monsters) then
+				for _, monster in pairs(config.monsters) do
+					local creature = getTopCreature(monster[1]).uid
+					if(creature > 0 and not isPlayer(creature)) then
+						doRemoveCreature(creature)
+					end
 
-				doCleanTile(monster[1])
-				doCreateMonster(monster[2], monster[1])
+					doCleanTile(monster[1])
+					doCreateMonster(monster[2], monster[1])
+				end
 			end
 
 			doCleanTile(config.doorPosition, true)
