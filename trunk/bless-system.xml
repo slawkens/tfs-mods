@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="bless-system" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<description><![CDATA[
+		This modification adds two new commands: !bless and !blesscheck.
+		Also, action script is included (it uses unique id 32001 - can be used with items).
+	]]></description>
+
+	<config name="bless-system-config"><![CDATA[
+		blessSystem = {}
+		blessSystem.config = {
+			baseCost = 2000,
+			levelCost = 200,
+			startLevel = 30,
+			endLevel = 120
+		}
+
+		blessSystem.needPremium = getBooleanFromString(getConfigValue('blessingsOnlyPremium'))
+	]]></config>
+
+	<lib name="bless-system-lib"><![CDATA[
+		domodlib('bless-system-config')
+
+		function blessSystem.buyAllBlessings(cid)
+			local price = blessSystem.config.baseCost
+			if(getPlayerLevel(cid) > blessSystem.config.startLevel) then
+				price = (price + ((math.min(blessSystem.config.endLevel, getPlayerLevel(cid)) - blessSystem.config.startLevel) * blessSystem.config.levelCost))
+			end
+
+			price = price * 5 * 1.2
+			if(blessSystem.needPremium and not isPremium(cid)) then
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You need a premium account to use blessings.")
+				return false
+			end
+
+			for i = 1, 5 do
+				if(getPlayerBlessing(cid, i)) then
+					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You already have all blessings.")
+					return false
+				end
+			end
+
+			if(not doPlayerRemoveMoney(cid, price)) then
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You don't have enough money for blessings. (You need " .. price .. " gp's)")
+				return false
+			end
+
+			for i = 1, 5 do
+				doPlayerAddBlessing(cid, i)
+			end
+
+			doPlayerSendTextMessage(cid, MESSAGE_EVENT_ADVANCE, "You have been blessed by the gods!")
+			doSendMagicEffect(getCreaturePosition(cid), CONST_ME_BIGCLOUDS)
+			return true
+		end
+	]]></lib>
+
+	<talkaction words="!blesscheck" event="script"><![CDATA[
+		domodlib('bless-system-config')
+
+		local blessNames = {"first", "second", "third", "fourth", "fifth"}
+		function onSay(cid, words, param)
+			local str = ""
+			local b = 0
+			for i = 1, 5 do
+				if(getPlayerBlessing(cid, i)) then
+					if(b ~= 0) then
+						str = str .. ", "
+					end
+					str = str .. blessNames[i]
+					b = b + 1
+				end
+			end
+
+			if(b > 0) then
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You have " .. str .. " blessing" .. (b > 0 and "s" or "") .. ". (Total: " .. b .. ")")
+			else
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You don't have any blessings.")
+			end
+			return TRUE
+		end
+	]]></talkaction>
+
+	<talkaction words="!bless" event="script"><![CDATA[
+		domodlib('bless-system-config')
+		domodlib('bless-system-lib')
+
+		function onSay(cid, words, param, channel)
+			blessSystem.buyAllBlessings(cid)
+			return true
+		end
+	]]></talkaction>
+
+	<action uniqueid="32001" event="script"><![CDATA[
+		domodlib('bless-system-config')
+		domodlib('bless-system-lib')
+
+		function onUse(cid, item, fromPosition, itemEx, toPosition)
+			blessSystem.buyAllBlessings(cid)
+			return true
+		end
+	]]></action>
+
+</mod>
