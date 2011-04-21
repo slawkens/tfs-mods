@@ -26,16 +26,20 @@ if(config.pin) then
 			return getPlayerStorageValue(cid, config.pinStorage)
 		end,
 
+		set = function(cid, code)
+			return setPlayerStorageValue(cid, config.pinStorage, code)
+		end,
+
 		logged = function(cid)
 			return pin[cid] == bank_pin.get(cid)
 		end,
 
-		validate = function(pin)
-			if(not isNumber(pin)) then
+		validate = function(code)
+			if(not isNumber(code)) then
 				return false
 			end
 
-			local length = tostring(pin):len()
+			local length = tostring(code):len()
 			return (length >= config.pinMinLength and length <= config.pinMaxLength)
 		end
 	}
@@ -130,7 +134,7 @@ local function getCount(string)
 end
 
 function greetCallback(cid)
-	talkState[cid], count[cid], transfer[cid] = 0, nil, nil
+	talkState[cid], count[cid], transfer[cid], pin[cid] = 0, nil, nil, nil
 	return true
 end
 
@@ -143,18 +147,33 @@ function creatureSayCallback(cid, type, msg)
 ---------------------------- pin -------------------------
 	if(config.pin) then
 		if(talkState[cid] == "verify-pin") then
+			talkState[cid] = 0
 			pin[cid] = getCount(msg)
 			if(not bank_pin.logged(cid)) then
 				selfSay("Invalid pin code entered. Please try again.", cid)
-				talkState[cid] = 0
 				return true
 			end
 
-			selfSay("Your have been successfully logged in. Now you can manage your bank account.", cid)
+			selfSay("You have been successfully logged in.", cid)
 		elseif(talkState[cid] == "new-pin") then
+			talkState[cid] = 0
+
+			if(bank_pin.get(cid) ~= -1 and not bank_pin.logged(cid)) then
+				selfSay("Please login before attempting to change your pin code.", cid)
+				talkState[cid] = "verify-pin"
+				return true
+			end
+
+			if(msgcontains(msg, 'reset') or msgcontains(msg, 'remove') or msgcontains(msg, 'clear')) then
+				selfSay("Pin code has been removed.", cid)
+				pin[cid] = nil
+				bank_pin.set(cid, -1)
+				return true
+			end
+
 			pin[cid] = getCount(msg)
 			if(bank_pin.validate(pin[cid])) then
-				selfSay("Pin code successfully changed. Now you can login ", cid)
+				selfSay("Pin code successfully changed.", cid)
 				bank_pin.set(cid, pin[cid])
 			else
 				local str = ""
@@ -165,7 +184,6 @@ function creatureSayCallback(cid, type, msg)
 				end
 
 				selfSay("Invalid pin code entered. Your pin should contain " .. str .. " digits", cid)
-				talkState[cid] = 0
 			end
 
 			return true
@@ -178,8 +196,10 @@ function creatureSayCallback(cid, type, msg)
 					talkState[cid] = "verify-pin"
 					return true
 				end
+
+				talkState[cid] = 0
 		elseif(msgcontains(msg, 'login')) then
-			talkState[cid] = "new-pin"
+			talkState[cid] = "verify-pin"
 			return true
 		elseif(msgcontains(msg, 'pin')) then
 			selfSay("Please tell me your new pin code.", cid)
