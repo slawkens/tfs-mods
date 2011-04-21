@@ -1,10 +1,15 @@
 local config = {
+	pin = false, -- players can protect their money with pin code (like in cash machines) (true/false)
+	pinMinLength = 4, -- minimum pin length
+	pinMaxLength = 4, -- maximum pin length
+	pinStorage = 3006, -- only if pin enabled (used to store player pin)
 	transferDisabledVocations = {0} -- disable non vocation characters
 }
 
 local talkState = {}
 local count = {}
 local transfer = {}
+local pin = {}
 
 local keywordHandler = KeywordHandler:new()
 local npcHandler = NpcHandler:new(keywordHandler)
@@ -14,6 +19,27 @@ function onCreatureAppear(cid)			npcHandler:onCreatureAppear(cid)		end
 function onCreatureDisappear(cid)		npcHandler:onCreatureDisappear(cid)		end
 function onCreatureSay(cid, type, msg)		npcHandler:onCreatureSay(cid, type, msg)	end
 function onThink()				npcHandler:onThink()				end
+
+if(config.pin) then
+	bank_pin = {
+		get = function(cid)
+			return getPlayerStorageValue(cid, config.pinStorage)
+		end,
+
+		logged = function(cid)
+			return pin[cid] == bank_pin.get(cid)
+		end,
+
+		validate = function(pin)
+			if(not isNumber(pin)) then
+				return false
+			end
+
+			local length = tostring(pin):len()
+			return (length >= config.pinMinLength and length <= config.pinMaxLength)
+		end
+	}
+end
 
 if(not getPlayerBalance) then
 	getPlayerBalance = function(cid)
@@ -114,6 +140,53 @@ function creatureSayCallback(cid, type, msg)
 		return false
 	end
 
+---------------------------- pin -------------------------
+	if(config.pin) then
+		if(talkState[cid] == "verify-pin") then
+			pin[cid] = getCount(msg)
+			if(not bank_pin.logged(cid)) then
+				selfSay("Invalid pin code entered. Please try again.", cid)
+				talkState[cid] = 0
+				return true
+			end
+
+			selfSay("Your have been successfully logged in. Now you can manage your bank account.", cid)
+		elseif(talkState[cid] == "new-pin") then
+			pin[cid] = getCount(msg)
+			if(bank_pin.validate(pin[cid])) then
+				selfSay("Pin code successfully changed. Now you can login ", cid)
+				bank_pin.set(cid, pin[cid])
+			else
+				local str = ""
+				if(config.pinMinLength ~= config.pinMaxLength) then
+					str = config.pinMinLength .. " - " .. config.pinMaxLength
+				else
+					str = config.pinMinLength
+				end
+
+				selfSay("Invalid pin code entered. Your pin should contain " .. str .. " digits", cid)
+				talkState[cid] = 0
+			end
+
+			return true
+		elseif(msgcontains(msg, 'balance') or
+			msgcontains(msg, 'deposit') or
+			msgcontains(msg, 'withdraw') or
+			msgcontains(msg, 'transfer')) then
+				if(bank_pin.get(cid) ~= -1 and not bank_pin.logged(cid)) then
+					selfSay("Please tell me your bank pin code before making any transactions.", cid)
+					talkState[cid] = "verify-pin"
+					return true
+				end
+		elseif(msgcontains(msg, 'login')) then
+			talkState[cid] = "new-pin"
+			return true
+		elseif(msgcontains(msg, 'pin')) then
+			selfSay("Please tell me your new pin code.", cid)
+			talkState[cid] = "new-pin"
+			return true
+		end
+	end
 ---------------------------- help ------------------------
 	if msgcontains(msg, 'advanced') then
 		if isInArray(config.transferDisabledVocations, getPlayerVocation(cid)) then

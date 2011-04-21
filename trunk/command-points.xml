@@ -7,7 +7,8 @@
 			pointsRune = {
 				enabled = "yes",
 				points = 50,
-				runeId = 2294
+				runeId = 2294,
+				minLevel = 10
 			},
 
 			changeName = {
@@ -94,8 +95,8 @@
 					return true
 				end
 
-				if(command_points.config.pointsRune.level and getPlayerLevel(cid) < command_points.config.pointsRune.level) then
-					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You need " .. command_points.config.pointsRune.level .. " level to buy this rune.")
+				if(command_points.config.pointsRune.minLevel and getPlayerLevel(cid) < command_points.config.pointsRune.minLevel) then
+					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You need " .. command_points.config.pointsRune.minLevel .. " level to buy this rune.")
 					return true
 				end
 
@@ -290,6 +291,6 @@
 	<item id="2294" article="a" name="points rune" override="yes">
 		<attribute key="runeSpellName" value="Points Rune"/>
 		<attribute key="weight" value="120"/>
-		<attribute key="description" value="50 points. Use it on self or other player to add points."/>
+		<attribute key="description" value="50 points. Use it on yourself or other player to add points."/>
 	</item>
 </mod>

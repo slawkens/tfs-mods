@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="command-refill" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="command-refill-config"><![CDATA[
+		items = {
+			["soft"] = { -- soft boots
+				id = 10021,
+				new_id = 2640,
+				price = 10000,
+				message = "Soft boots has been refilled."
+			},
+
+			["firewalker"] = { -- firewalker boots
+				id = 10022,
+				new_id = 9932,
+				price = 50000,
+				message = "Firewalker boots has been refilled."
+			}
+		}
+	]]></config>
+
+	<lib name="command-refill-lib"><![CDATA[
+		domodlib('command-refill-config')
+
+		command_refill = {
+			items = items,
+
+			buy = function (cid, name)
+				local item = command_refill.items[name]
+				if(not item) then
+					print('command-refill.xml - invalid item name used (' .. name .. ')')
+					return false
+				end
+
+				if(getPlayerItemCount(cid, item.id) >= 1) then
+					if(getPlayerMoney(cid) >= item.price) then
+						if(doPlayerRemoveItem(cid, item.id, 1)) then
+							doPlayerBuyItem(cid, item.new_id, 1, item.price, 1)
+							if(item.message) then
+								doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, item.message)
+							end
+							return true
+						end
+					else
+						doPlayerSendCancel(cid, "Not enough money.")
+					end
+				else
+					doPlayerSendCancel(cid, "Item not found in your inventory.")
+				end
+
+				return false
+			end
+		}
+	]]></lib>
+
+	<talkaction words="!refill" event="script"><![CDATA[
+		domodlib('command-points-lib')
+
+		function onSay(cid, words, param, channel)
+			param = param:lower():trim()
+			if(param == '') then
+				local str = ""
+				for name, item in pairs(command_refill.items) do
+					str = str .. "!refill " .. name .. "\n"
+				end
+
+				doPlayerPopupFYI(cid, str)
+				return true
+			end
+
+			local item = command_refill.items[param]
+			if(not item) then
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Invalid option.")
+				return true
+			end
+
+			command_refill.buy(cid, item.name)
+			return true
+		end
+	]]></talkaction>
+
+	<talkaction words="!soft" event="script"><![CDATA[
+		domodlib('command-refill-lib')
+		function onSay(cid, words, param, channel)
+			command_refill.buy(cid, "soft")
+			return true
+		end
+	]]></talkaction>
+
+ 	<talkaction words="!firewalker" event="script"><![CDATA[
+		domodlib('command-refill-lib')
+		function onSay(cid, words, param, channel)
+			command_refill.buy(cid, "firewalker")
+			return true
+		end
+	]]></talkaction>
+</mod>
