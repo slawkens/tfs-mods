@@ -2,7 +2,7 @@
 <mod name="guild-outfit" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<config name="guild-outfit-config"><![CDATA[
 		exhaust = 30 -- in seconds
-		storage = 3002 -- storage value used to save exhaustion
+		storage = 3005 -- storage value used to save exhaustion
 	]]></config>
 
 	<talkaction words="!go" event="script"><![CDATA[

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mod name="login-history" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<config name="login-history-config"><![CDATA[
-		expires = 30 -- how many days to expire (clean) old logs from history
+		expires = 30 * 24 * 60 * 60-- how long to keep logs in database (default: 30 days)
 	]]></config>
 
 	<!--

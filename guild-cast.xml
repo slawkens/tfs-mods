@@ -17,7 +17,7 @@
 
 		function onSay(cid, words, param, channel)
 			if(exhaustion.check(cid, config.storage)) then
-				doPlayerSendCancel(cid, "You can broadcast message only once per " .. config.exhaustion .. " seconds.")
+				doPlayerSendCancel(cid, "You can broadcast message only one time per " .. config.exhaustion .. " seconds.")
 				return true
 			end
 
