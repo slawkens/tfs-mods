@@ -37,6 +37,7 @@
 
 		-- message player see when getting reward, can be personalized for each reward
 		message = "Congratulations, you advanced in {SKILL} level {LEVEL} and received {ITEM} as a reward!"
+		messageType = MESSAGE_INFO_DESCR
 
 		-- uncomment if you want to see magic effect when reward is added
 		--effect = 30 -- magic effect id
@@ -54,28 +55,32 @@
 		function onAdvance(cid, skill, oldLevel, newLevel)
 			for _, reward in pairs(config.rewards) do
 				if(reward.skill == skill and newLevel >= reward.level
-					and getPlayerStorageValue(cid, reward.storage) ~= 1)
+					and (reward.storage <= 0 or getPlayerStorageValue(cid, reward.storage) ~= 1))
 				then
 					if(not reward.callback or reward.callback(cid, reward)) then
 						local continue = true
 
-						if(not reward.inside) then
-							if(reward.item and doPlayerAddItem(cid, reward.item, reward.count or 1) == false) then
-								continue = false
-							end
-						elseif(isItemContainer(reward.item)) then
-							local container = doCreateItemEx(reward.item, 1)
-							for _, item in ipairs(reward.inside) do
-								doAddContainerItem(container, item.id, item.count or 1)
-							end
+						if(reward.item) then
+							if(not reward.inside) then
+								if(doPlayerAddItem(cid, reward.item, reward.count or 1) == false) then
+									continue = false
+								end
+							elseif(isItemContainer(reward.item)) then
+								local container = doCreateItemEx(reward.item, 1)
+								for _, item in ipairs(reward.inside) do
+									doAddContainerItem(container, item.id, item.count or 1)
+								end
 
-							if(doPlayerAddItemEx(cid, container, false) ~= RETURNVALUE_NOERROR) then
-								continue = false
+								if(doPlayerAddItemEx(cid, container, false) ~= RETURNVALUE_NOERROR) then
+									continue = false
+								end
 							end
 						end
 
 						if(continue) then
-							setPlayerStorageValue(cid, reward.storage, 1)
+							if(reward.storage > 0) then
+								setPlayerStorageValue(cid, reward.storage, 1)
+							end
 
 							local message = reward.message or config.message
 								if(type(reward.message) == 'boolean') then
@@ -94,7 +99,8 @@
 									t["ITEM"] = getItemNameById(reward.item)
 								end
 
-								doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, tostring(message:gsub("{(.-)}", function(v) return t[v] end)))
+								local messageType = reward.messageType or config.messageType
+								doPlayerSendTextMessage(cid, messageType, tostring(message:gsub("{(.-)}", function(v) return t[v] end)))
 							end
 
 							local effect = reward.effect or config.effect
