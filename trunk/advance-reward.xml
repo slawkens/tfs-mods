@@ -2,8 +2,8 @@
 <mod name="advance-reward" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<config name="advance-reward-config"><![CDATA[
 		rewards = {
-			{skill = SKILL__LEVEL, level = 100, storage = 3100, item = 2160, count = 30},
-			{skill = SKILL_FISHING, level = 20, storage = 3101, item = 3976, count = 100},
+			-- {skill = SKILL__LEVEL, level = 100, storage = 3100, item = 2160, count = 30},
+			-- {skill = SKILL_FISHING, level = 20, storage = 3101, item = 3976, count = 100},
 			-- more examples
 			--{skill = SKILL_SWORD, level = 110, storage = 3102, item = 2400, message = "Take this as a reward for advancing in 120 sword fighting level!", effect = 61}
 
@@ -35,7 +35,7 @@
 			]]--
 		}
 
-		-- message player see when getting reward, you can also personalize it for every reward
+		-- message player see when getting reward, can be personalized for each reward
 		message = "Congratulations, you advanced in {SKILL} level {LEVEL} and received {ITEM} as a reward!"
 
 		-- uncomment if you want to see magic effect when reward is added
