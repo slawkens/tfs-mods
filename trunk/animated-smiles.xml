@@ -9,7 +9,7 @@
 		domodlib('animated-smiles-config')
 
 		local config = {
-			exhaustion = exhaust,
+			exhaust = exhaust,
 			storage = storage
 		}
 
@@ -26,7 +26,7 @@
 				doSendMagicEffect(getCreaturePosition(cid), CONST_ME_HEARTS)
 			end
 
-			exhaustion.set(cid, config.storage, config.exhaustion)
+			exhaustion.set(cid, config.storage, config.exhaust)
 			doCreatureSay(cid, words, TALKTYPE_ORANGE_1)
 			return true
 		end
