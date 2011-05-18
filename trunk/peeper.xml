@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="peeper" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="peeper-config"><![CDATA[
+		-- anonymously or display peeper name?
+		anonymous = "no"
+
+		messageType = MESSAGE_STATUS_DEFAULT
+	]]></config>
+
+	<event type="look" name="peeper-event" event="script"><![CDATA[
+		domodlib('peeper-config')
+
+		local config = {
+			anonymous = getBooleanFromString(anonymous),
+			messageType = messageType
+		}
+
+		function onLook(cid, thing, position, lookDistance)
+			if(isPlayer(thing.uid)) then
+				doPlayerSendTextMessage(thing.uid, config.messageType, (config.anonymous and "Someone" or getPlayerName(cid)) .. " is looking at you.")
+			end
+
+			return true
+		end
+	]]></event>
+
+	<event type="login" name="peeper-login" event="buffer"><![CDATA[
+		registerCreatureEvent(cid, "peeper-event")
+		_result = true
+	]]></event>
+</mod>

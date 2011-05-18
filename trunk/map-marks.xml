@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="map-marks" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="map-marks-config"><![CDATA[
+		-- increase this value after adding new marks, so player can step again and receive new map marks
+		version = 1
+
+		storage = 3007
+
+		marks = {
+			{mark = 5, pos = {x = 166, y = 439, z = 7}, desc = "Main City Temple"},
+			{mark = 7, pos = {x = 300, y = 200, z = 7}, desc = "NPC with tools!"},
+			{mark = 1, pos = {x = 666, y = 666, z = 6}}
+		}
+	]]></config>
+
+	<movevent type="StepIn" actionid="3015" event="script"><![CDATA[
+		domodlib('map-marks-config')
+
+		local config = {
+			version = version,
+			storage = storage,
+			marks = marks
+		}
+
+		local f_addMark = doPlayerAddMapMark
+		if(not f_addMark) then f_addMark = doAddMapMark end
+
+		function onStepIn(cid, item, position, fromPosition)
+			if(isPlayer(cid) ~= TRUE or getPlayerStorageValue(cid, config.storage) == config.version) then
+				return TRUE
+			end
+
+			for _, m  in pairs(config.marks) do
+				f_addMark(cid, m.pos, m.mark, m.desc ~= nil and m.desc or "")
+			end
+
+			setPlayerStorageValue(cid, config.storage, config.version)
+			return TRUE
+		end
+	]]></movevent>
+</mod>
