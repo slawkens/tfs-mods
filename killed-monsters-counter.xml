@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="killed-monsters-counter" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<event type="kill" name="killed-monsters-counter-event" event="script"><![CDATA[
+		local monsters = {
+			--name = storage
+			["rat"] = 3200,
+			["troll"] = 3201,
+			["rotworm"] = 3202,
+			["dragon"] = 3203,
+			["dragon lord"] = 3204,
+			["demon"] = 3205,
+		}
+
+		function onKill(cid, target)
+			if(isPlayer(target) ~= TRUE) then
+				local master = getCreatureMaster(target)
+				if(master and master ~= target) then return FALSE end
+
+				local name = getCreatureName(target)
+				local monster = monsters[string.lower(name)]
+				if(monster) then
+					local killedMonsters = getPlayerStorageValue(cid, monster)
+					if(killedMonsters == -1) then
+						killedMonsters = 1
+					end
+					doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, "You killed " .. killedMonsters .. " " .. name .. "'s.")
+					setPlayerStorageValue(cid, monster, killedMonsters + 1)
+				end
+			end
+			
+			return TRUE
+		end
+	]]></event>
+
+	<event type="login" name="killed-monsters-counter-login" event="buffer"><![CDATA[
+		registerCreatureEvent(cid, "killed-monsters-counter-event")
+		_result = true
+	]]></event>
+</mod>

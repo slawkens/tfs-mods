@@ -14,7 +14,7 @@
 			changeName = {
 				enabled = "yes",
 				points = 50,
-				storage = 70009,
+				storage = 3008,
 				delay = 30 * 24 * 60 * 60 -- 30 days, in seconds
 			},
 
