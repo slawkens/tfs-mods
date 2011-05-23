@@ -53,6 +53,10 @@
 		}
 
 		function onAdvance(cid, skill, oldLevel, newLevel)
+			if(not config.rewards) then
+				return true
+			end
+
 			for _, reward in pairs(config.rewards) do
 				if(reward.skill == skill and newLevel >= reward.level
 					and (reward.storage <= 0 or getPlayerStorageValue(cid, reward.storage) ~= 1))
