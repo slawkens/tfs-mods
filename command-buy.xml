@@ -11,7 +11,7 @@
 		}
 	]]></config>
 
-	<talkaction words="!buy" event="script"><![CDATA[
+	<talkaction words="!buy;/buy" event="script"><![CDATA[
 		domodlib('command-buy-config')
 		local config = {
 			items = items

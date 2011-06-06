@@ -4,6 +4,10 @@
 		-- anonymously or display peeper name?
 		anonymous = "no"
 
+		-- ignore players with access (will not show message when they look on someone)
+		hiddenAccess = 3
+
+		-- message color (type)
 		messageType = MESSAGE_STATUS_DEFAULT
 	]]></config>
 
@@ -12,11 +16,12 @@
 
 		local config = {
 			anonymous = getBooleanFromString(anonymous),
+			hiddenAccess = hiddenAccess,
 			messageType = messageType
 		}
 
 		function onLook(cid, thing, position, lookDistance)
-			if(isPlayer(thing.uid)) then
+			if(isPlayer(thing.uid) and getPlayerAccess(cid) < config.hiddenAccess) then
 				doPlayerSendTextMessage(thing.uid, config.messageType, (config.anonymous and "Someone" or getPlayerName(cid)) .. " is looking at you.")
 			end
 
