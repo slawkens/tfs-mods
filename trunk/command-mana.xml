@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="command-mana" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<talkaction words="!mana" event="script"><![CDATA[
+		 function onSay(cid, words, param, channel)
+			doPlayerSendTextMessage(cid, 27, "You need to spent " .. (getPlayerRequiredMana(cid, getPlayerMagLevel(cid, TRUE) + 1) - getPlayerSpentMana(cid))  ..
+				" mana to next magic level.")
+			return true
+		end
+	]]></talkaction>
+</mod>

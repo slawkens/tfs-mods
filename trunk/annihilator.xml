@@ -48,7 +48,7 @@
 				},
 
 				-- Position and ID of doors, which will be auto-closed
-				doorPosition = {x = 2865, y= 641, z = 13},
+				doorPosition = {x = 2865, y = 641, z = 13},
 				doorId = 1219
 			}
 		}

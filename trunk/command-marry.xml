@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="command-marry" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="command-marry-config"><![CDATA[
+		storage = 3009
+	]]></config>
+
+	<talkaction words="!marry" event="script"><![CDATA[
+		domodlib('command-marry-config')
+		local config = {
+			storage = storage
+		}
+
+		local function hearthEffect(cid)
+			if(isPlayer(cid)) then
+				doSendMagicEffect(getCreaturePosition(cid), CONST_ME_HEARTS)
+			end
+		end
+
+		local function internalMarried(cid, pid, guid)
+			doPlayerSetPartner(cid, guid)
+			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "*CONGRATULATIONS!*\nYou are now married with " .. getCreatureName(pid) .. ".")
+			doSendMagicEffect(getCreaturePosition(cid), CONST_ME_HEARTS)
+		end
+
+		function onSay(cid, words, param, channel)
+			if(param == '') then
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.\nUsage: !marry playerName")
+				return true
+			end
+
+			if(isInArray({"divorce", "leave"}, param:lower())) then
+				local partnerGUID = getPlayerPartner(cid)
+				if(not partnerGUID or partnerGUID == 0) then
+					doPlayerSendCancel(cid, "You're not married yet.")
+					return true
+				end
+
+				local pid = getPlayerByName(getPlayerNameByGUID(partnerGUID, false, false))
+				if(not pid or pid == 0) then
+					doPlayerSendCancel(cid, "Your partner must be online to get divorced.")
+				else
+					local targetPartnerGUID = getPlayerPartner(pid)
+					if(targetPartnerGUID == getPlayerGUID(cid)) then
+						doPlayerSendTextMessage(pid, MESSAGE_INFO_DESCR, "Your marriage has been divorced.")
+						doPlayerSetPartner(pid, 0)
+					end
+
+					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Your marriage has been divorced.")
+					doPlayerSetPartner(cid, 0)
+				end
+
+				return true
+			end
+
+			local pid = getPlayerByNameWildcard(param)
+			if(not pid or (isPlayerGhost(pid) and getPlayerGhostAccess(pid) > getPlayerGhostAccess(cid))) then
+				doPlayerSendCancel(cid, "Player " .. param .. " not found.")
+				return true
+			end
+
+			if(getPlayerCustomFlagValue(pid, PlayerCustomFlag_GamemasterPrivileges)) then
+				doPlayerSendCancel(cid, "You cannot marry this person.")
+				return true
+			end
+
+			if(getPlayerGUID(cid) == getPlayerGUID(pid)) then
+				doPlayerSendCancel(cid, "You cannot be self married.")
+				return true
+			end
+
+			local sex, targetSex = getPlayerSex(cid), getPlayerSex(pid)
+			if(sex == targetSex) then
+				doPlayerSendCancel(cid, "You cannot be married with same gender as self, pervert!")
+				doSendMagicEffect(getPlayerPosition(cid),CONST_ME_POFF)
+				return true
+			end
+
+			local guid, targetGUID = getPlayerGUID(cid), getPlayerGUID(pid)
+			if(getPlayerPartner(cid) == targetGUID) then
+				doPlayerSendCancel(cid, "You are already married with this person.")
+				return true
+			end
+
+			local pos, targetPos = getCreaturePosition(cid), getCreaturePosition(pid)
+			if(getDistanceBetween(pos, targetPos) > 1) then
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, getCreatureName(cid) .. " tells you to move closer.")
+				doSendMagicEffect(getPlayerPosition(cid),CONST_ME_POFF)
+				return true
+			end
+
+			if(getPlayerStorageValue(pid, config.storage) ~= guid) then
+				setPlayerStorageValue(cid, config.storage, targetGUID)
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Your proposition has been sent to " .. getCreatureName(pid) .. ".")
+				local playerName = getCreatureName(cid)
+				doPlayerSendTextMessage(pid, MESSAGE_INFO_DESCR, playerName .. " want be married with you. Use '!marry " .. playerName .. "' to accept.")
+				return true
+			end
+
+			internalMarried(cid, pid, targetGUID)
+			internalMarried(pid, cid, guid)
+			return true
+		end
+	]]></talkaction>
+</mod>

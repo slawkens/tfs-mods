@@ -54,7 +54,7 @@
 		end
 	]]></lib>
 
-	<talkaction words="!blesscheck" event="script"><![CDATA[
+	<talkaction words="!blesscheck;!blesstest" event="script"><![CDATA[
 		domodlib('bless-system-config')
 
 		local blessNames = {"first", "second", "third", "fourth", "fifth"}
