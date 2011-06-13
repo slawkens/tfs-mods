@@ -11,6 +11,11 @@
 		}
 	]]></config>
 
+	<!--
+		TODO:
+			- buying items for premium_points
+	-->
+
 	<talkaction words="!buy;/buy" event="script"><![CDATA[
 		domodlib('command-buy-config')
 		local config = {

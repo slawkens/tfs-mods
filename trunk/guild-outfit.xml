@@ -5,6 +5,11 @@
 		storage = 3005 -- storage value used to save exhaustion
 	]]></config>
 
+	<!--
+		TODO:
+			- change colors only (configurable)
+	-->
+
 	<talkaction words="!go" event="script"><![CDATA[
 		domodlib('guild-outfit-config')
 
