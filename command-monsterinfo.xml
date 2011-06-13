@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="command-monsterinfo" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<talkaction words="!m" event="script"><![CDATA[
+		function onSay(cid, words, param, channel)
+			local monster = getMonsterInfo(param)
+			if(not monster) then
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Monster with this name does not exist.")
+				return true
+			end
+
+			local tmp = ""
+			local header = "Monster info: " .. monster.name .. "\n\n"
+			local str = header .. "Health: " .. monster.health
+			if(monster.health ~= monster.healthMax) then
+				str = str .. "/" .. monster.healthMax
+			end
+
+			str = str .. "\n Experience: " .. getExperienceStage(getPlayerLevel(cid)) * monster.experience
+			if(monster.manaCost ~= 0) then
+				str = str .. "\n ManaCost: " .. monster.manaCost
+			end
+
+			local i = 0
+			local attackSpells = getMonsterAttackSpells(param)
+			tmp = ""
+			for _, spell in pairs(attackSpells) do
+				if(spell.minCombatValue ~= 0) then
+					tmp = tmp .. "*Min: " .. spell.minCombatValue .. " Max: " .. spell.maxCombatValue .. "\n"
+					i = i + 1
+				end
+			end
+			if(i > 0) then
+				str = str .. "\n\nAttack spells:\n" .. tmp
+			end
+
+			tmp = ""
+			i = 0
+			local summonList = getMonsterSummonList(param)
+			if #summonList > 0 then
+				for _, summon in pairs(summonList) do
+					tmp = tmp .. summon.name .. " (Max: " .. summon.amount .. ")\n"
+					i = i + 1
+				end
+			end
+			if(i > 0) then
+				str = str .. "\n\nSummons:\n" .. tmp
+			end
+
+			if(str:len() > 1000) then
+				doPlayerPopupFYI(cid, str)
+				str = ""
+			end
+
+			str = header .. "Loot:\n"
+			local lootList = getMonsterLootList(param)
+			for _, item in pairs(lootList) do
+				str = str .. getItemNameById(item.id) .. " (Max: " .. item.countMax .. ")\n"
+			end
+
+			doPlayerPopupFYI(cid, str)
+			return true
+		end
+	]]></talkaction>
+</mod>

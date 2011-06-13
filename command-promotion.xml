@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="command-promotion" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="no">
+	<config name="command-promotion-config"><![CDATA[
+		-- how much gold coins does it cost
+		cost = 20000
+
+		-- required level to buy a promotion
+		minLevel = 20
+
+		-- need premium account to use command?
+		needPremium = "yes"
+
+		-- maximum promotion level player can advance to (default = 1). Can be ignored if there are not any new vocations on the server.
+		maxPromotionLevel = 1
+	]]></config>
+
+	<talkaction words="!promotion" event="script"><![CDATA[
+		domodlib('command-promotion-config')
+
+		local config = {
+			cost = cost,
+			minLevel = minLevel,
+			needPremium = needPremium,
+			maxPromotionLevel = maxPromotionLevel
+		}
+
+		config.needPremium = getBooleanFromString(config.needPremium)
+
+		function onSay(cid, words, param, channel)
+			if(config.needPremium and not isPremium(cid)) then
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You need a premium account to get promotion.")
+				return true
+			end
+
+			if(getPlayerPromotionLevel(cid) >= config.maxPromotionLevel) then
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You are already promoted.")
+			elseif(getPlayerLevel(cid) < config.minLevel) then
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You need " .. config.minLevel .. " to get promotion.")
+			elseif(doPlayerRemoveMoney(cid, config.cost) ~= TRUE) then
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You do not have enought money! (Promotion cost " .. config.cost .. " gold coins.")
+			else
+				setPlayerPromotionLevel(cid, getPlayerPromotionLevel(cid) + 1)
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You have been promoted to " .. getVocationInfo(getPlayerVocation(cid)).name .. ".")
+			end
+
+			return true
+		end
+	]]></talkaction>
+</mod>

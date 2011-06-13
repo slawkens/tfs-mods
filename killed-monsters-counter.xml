@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mod name="killed-monsters-counter" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<!--
+		TODO:
+			- automatically assign storages in TFS 0.4 that supports string as a key
+			- configurable message interval that will prevent spam in the console (i.e. inform player each X kills)
+			- rewards for killing monsters
+	-->
+
 	<event type="kill" name="killed-monsters-counter-event" event="script"><![CDATA[
 		local monsters = {
 			--name = storage
@@ -27,7 +34,7 @@
 					setPlayerStorageValue(cid, monster, killedMonsters + 1)
 				end
 			end
-			
+
 			return TRUE
 		end
 	]]></event>
