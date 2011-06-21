@@ -2,12 +2,12 @@
 <mod name="command-buy" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
 	<config name="command-buy-config"><![CDATA[
 		items = {
-			['aol'] =		{cost = 30000,	id = 2173},
-			['backpack'] =	{cost = 100,	id = 1988},
+			['aol'] =		{cost = 50000,	id = 2173},
+			['backpack'] =	{cost = 25,	id = 1988},
 			['rope'] =		{cost = 50,		id = 2120},
 			['shovel'] =	{cost = 50,		id = 2554},
-			['machete'] =	{cost = 50,		id = 2420},
-			['fishing rod'] = {cost = 50,	id = 2580}
+			['machete'] =	{cost = 40,		id = 2420},
+			['fishing rod'] = {cost = 150,	id = 2580}
 		}
 	]]></config>
 
