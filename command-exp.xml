@@ -16,8 +16,8 @@
 			if(param == '') then
 				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You need " .. getExperienceForLevel(getPlayerLevel(cid) + 1) - getPlayerExperience(cid) ..
 					" experience to gain next level." .. (config.experienceHistory and
-						(" Today you have gained " .. getPlayerTodayExperience(cid) .. " experience points." ..
-						" Your experience record: " .. getPlayerExperienceRecord(cid) .. ".") or ""))
+						(" Today you have gained " .. getPlayerTodayExperience(cid) .. " experience points" ..
+						", and your experience record is " .. getPlayerExperienceRecord(cid) .. " experience points") or "") .. ".")
 
 				return true
 			end
