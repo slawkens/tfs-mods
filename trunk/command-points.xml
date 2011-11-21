@@ -8,7 +8,7 @@
 				enabled = "yes",
 				points = 50,
 				runeId = 2294,
-				minLevel = 10
+				minLevel = 8
 			},
 
 			changeName = {
@@ -30,7 +30,8 @@
 
 			refuelStamina = {
 				enabled = "yes",
-				points = 30
+				points = 30,
+				full = 42 * 60 -- full stamina in minutes
 			}
 		}
 	]]></config>
@@ -197,14 +198,13 @@
 					return true
 				end
 
-				local full = getConfigValue('staminaRatingLimitTop')
-				if(getPlayerStamina(cid) >= full) then
+				if(getPlayerStamina(cid) >= command_points.config.refuelStamina.full)) then
 					doPlayerSendCancel(cid, "Your stamina is already full.")
 				elseif(not isPremium(cid)) then
 					doPlayerSendCancel(cid, "You must have a premium account.")
 				else
 					if(doPlayerRemovePoints(cid, command_points.config.refuelStamina.points)) then
-						doPlayerSetStamina(cid, full)
+						doPlayerSetStamina(cid, command_points.config.refuelStamina.full))
 						doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, "Your stamina has been refilled.")
 						doPlayerSave(cid)
 						command_points.logAction("refuelStamina: " .. getCreatureName(cid))
@@ -241,8 +241,8 @@
 			return true
 		end
 	]]></talkaction>
-
-	<!--talkaction words="!rs" event="script"><![CDATA[
+<!--
+	<talkaction words="!rs" event="script"><![CDATA[
 		domodlib('command-points-lib')
 		function onSay(cid, words, param, channel)
 			command_points.removeSkull(cid)
@@ -264,8 +264,8 @@
 			command_points.changeSex(cid
 			return true
 		end
-	]]></talkaction-->
-
+	]]></talkaction>
+-->
 	<!-- Points rune -->
 	<!-- You can remove/comment below lines if you don't want to use it -->
 	<action itemid="2294" allowfaruse="1" blockwalls="1" event="script"><![CDATA[

@@ -21,7 +21,7 @@
 		}
 
 		function onLook(cid, thing, position, lookDistance)
-			if(isPlayer(thing.uid) and getPlayerAccess(cid) < config.hiddenAccess) then
+			if(isPlayer(thing.uid) and cid ~= thing and getPlayerAccess(cid) < config.hiddenAccess) then
 				doPlayerSendTextMessage(thing.uid, config.messageType, (config.anonymous and "Someone" or getPlayerName(cid)) .. " is looking at you.")
 			end
 

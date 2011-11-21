@@ -1,13 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mod name="command-marry" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+<mod name="command-marry" version="1.1" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<description>
+		This mod adds a new command to the server that allows peoples to take a wedding using command.
+
+		Usage is very simple:
+			!marry name (one person initiates it, and after that second person have to accept it)
+			!marry divorce (take a divorce with your partner (if you have any))
+	</description>
+
 	<config name="command-marry-config"><![CDATA[
 		storage = 3009
+		allowHomoWedding = false -- allow marriages of players with same gender?
+		blockedAccess = 3 -- access of the same or higher value can't take a wedding (by default: 4 - don't allow gamemasters)
 	]]></config>
+
+	<!-- Changelog of this mod:
+		v1.0
+			- first version, most of the current functionalities
+		v1.1
+			- added 2 new configurables: allowHomoWedding and blockedAccess
+	-->
 
 	<talkaction words="!marry" event="script"><![CDATA[
 		domodlib('command-marry-config')
+
 		local config = {
-			storage = storage
+			storage = storage,
+			allowHomoWedding = getBooleanFromString(allowHomoWedding),
+			blockedAccess = blockedAccess
 		}
 
 		local function hearthEffect(cid)
@@ -58,7 +78,7 @@
 				return true
 			end
 
-			if(getPlayerCustomFlagValue(pid, PlayerCustomFlag_GamemasterPrivileges)) then
+			if(config.blockedAccess > 0 and (getPlayerAccess(pid) >= config.blockedAccess or getPlayerAccess(cid) >= config.blockedAccess)) then
 				doPlayerSendCancel(cid, "You cannot marry this person.")
 				return true
 			end
@@ -69,8 +89,8 @@
 			end
 
 			local sex, targetSex = getPlayerSex(cid), getPlayerSex(pid)
-			if(sex == targetSex) then
-				doPlayerSendCancel(cid, "You cannot be married with same gender as self, pervert!")
+			if(not config.allowHomoWedding and sex == targetSex) then
+				doPlayerSendCancel(cid, "Sorry, for this time we do not allow to take marriage with same gender (sex) as you got. Please marry with someone else.")
 				doSendMagicEffect(getPlayerPosition(cid),CONST_ME_POFF)
 				return true
 			end
@@ -84,7 +104,7 @@
 			local pos, targetPos = getCreaturePosition(cid), getCreaturePosition(pid)
 			if(getDistanceBetween(pos, targetPos) > 1) then
 				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, getCreatureName(cid) .. " tells you to move closer.")
-				doSendMagicEffect(getPlayerPosition(cid),CONST_ME_POFF)
+				doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
 				return true
 			end
 

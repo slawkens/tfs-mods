@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mod name="command-refill" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<description>
+		This mod adds a new command to the server, that can be used to refill (more precisely: change one id to another id
+			for fixed price). More items can be added by modifying 'items' table.
+	</description>
+
 	<config name="command-refill-config"><![CDATA[
 		items = {
 			["soft"] = { -- soft boots
@@ -78,6 +83,7 @@
 		end
 	]]></talkaction>
 
+<!-- uncomment this to shorten command to be used (for example, only '!soft' instead of '!refill soft'
 	<talkaction words="!soft" event="script"><![CDATA[
 		domodlib('command-refill-lib')
 		function onSay(cid, words, param, channel)
@@ -93,4 +99,5 @@
 			return true
 		end
 	]]></talkaction>
+-->
 </mod>
