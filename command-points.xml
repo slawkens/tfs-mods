@@ -198,13 +198,13 @@
 					return true
 				end
 
-				if(getPlayerStamina(cid) >= command_points.config.refuelStamina.full)) then
+				if(getPlayerStamina(cid) >= command_points.config.refuelStamina.full) then
 					doPlayerSendCancel(cid, "Your stamina is already full.")
 				elseif(not isPremium(cid)) then
 					doPlayerSendCancel(cid, "You must have a premium account.")
 				else
 					if(doPlayerRemovePoints(cid, command_points.config.refuelStamina.points)) then
-						doPlayerSetStamina(cid, command_points.config.refuelStamina.full))
+						doPlayerSetStamina(cid, command_points.config.refuelStamina.full)
 						doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, "Your stamina has been refilled.")
 						doPlayerSave(cid)
 						command_points.logAction("refuelStamina: " .. getCreatureName(cid))
