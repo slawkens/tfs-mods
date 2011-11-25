@@ -6,6 +6,7 @@
 			local monster = getMonsterInfo(param)
 			if(not monster) then
 				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Monster with this name does not exist.")
+				if(errors ~= nil) then errors(true) end
 				return true
 			end
 
@@ -23,10 +24,13 @@
 				str = str .. "\n ManaCost: " .. monster.manaCost
 			end
 
+			if(not monster.attacks) then
+				monster.attacks = getMonsterAttackSpells(param)
+			end
+
 			local i = 0
-			local attackSpells = getMonsterAttackSpells(param)
 			tmp = ""
-			for _, spell in pairs(attackSpells) do
+			for _, spell in pairs(monster.attacks) do
 				if(spell.minCombatValue ~= 0) then
 					tmp = tmp .. "*Min: " .. spell.minCombatValue .. " Max: " .. spell.maxCombatValue .. "\n"
 					i = i + 1
@@ -36,11 +40,14 @@
 				str = str .. "\n\nAttack spells:\n" .. tmp
 			end
 
+			if(not monster.summons) then
+				monster.summons = getMonsterSummonList(param)
+			end
+
 			tmp = ""
 			i = 0
-			local summonList = getMonsterSummonList(param)
-			if #summonList > 0 then
-				for _, summon in pairs(summonList) do
+			if #monster.summons > 0 then
+				for _, summon in pairs(monster.summons) do
 					tmp = tmp .. summon.name .. " (Max: " .. summon.amount .. ")\n"
 					i = i + 1
 				end
@@ -54,10 +61,13 @@
 				str = ""
 			end
 
+			if(not monster.loot) then
+				monster.loot = getMonsterLootList(param)
+			end
+
 			str = header .. "Loot:\n"
-			local lootList = getMonsterLootList(param)
-			for _, item in pairs(lootList) do
-				str = str .. getItemNameById(item.id) .. " (Max: " .. item.countMax .. ")\n"
+			for _, item in pairs(monster.loot) do
+				str = str .. getItemNameById(item.id) .. " (Max: " .. (item.countMax and item.countMax or item.count) .. ")\n"
 			end
 
 			doPlayerPopupFYI(cid, str)
