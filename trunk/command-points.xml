@@ -36,6 +36,11 @@
 		}
 	]]></config>
 
+	<!--
+		TODO:
+			* add /points command for admins to check/manage player points
+	-->
+
 	<lib name="command-points-lib"><![CDATA[
 		domodlib('command-points-config')
 
