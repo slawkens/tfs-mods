@@ -2,7 +2,7 @@
 
 = Introduction =
 
-[http://code.google.com/p/tfs-mods/source/browse/trunk/command-lua.xml /lua command] allows you to easily execute lua code inside game window.
+[http://code.google.com/p/tfs-mods/source/browse/trunk/command-lua.xml /lua command] allows you to easily execute lua code from the client.
 
 = Example usage =
 
