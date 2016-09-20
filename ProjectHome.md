@@ -14,7 +14,7 @@ The Forgotten Server 0.2 series, 1.0, 1.1, 1.2 and newer, are not supported, as 
 # Download #
 Download mod from [here](Mods.md).
 _`*`tip`*`_: on linux you can use wget command to download the file
-  * `wget tfs-mods.googlecode.com/svn/trunk/command-bank.xml`
+  * `wget https://raw.githubusercontent.com/slawkens1/tfs-mods/master/command-bank.xml`
 
 # Installation #
   1. Place downloaded file into **mods/** directory.
