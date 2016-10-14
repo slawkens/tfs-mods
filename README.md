@@ -1,3 +1,27 @@
+Few useful mods for The Forgotten Server also known as TFS.
+
+Released under GPLv3 license. Feel free to use them. If you gonna put them on other sites, please link there, so it will be always up-to-date when there is update available.
+
+If you want to help me with mods development, please contact me at [otland](https://otland.net/members/slawkens.2839/).
+
+### Requirements
+
+The Forgotten Server 0.3.5 (every newer release should work, including 0.4_DEV and 0.4_SVN series).
+
+The Forgotten Server 0.2 series, 1.0, 1.1, 1.2 and newer, are not supported, as they lack mod support.
+
+### Download
+
+Download mod from here. *tip*: on linux you can use wget command to download the file
+wget tfs-mods.googlecode.com/svn/trunk/command-bank.xml
+
+### Installation
+
+Place downloaded file into mods/ directory.
+Additionally you can open file and configure it to meet your requirements, by editing <config> section.
+Restart your server.
+Mod should be enabled from now ;)
+
 Many of these have still version 1.0, because they were never released to the public before.
 
 | Name | Version | Description |
