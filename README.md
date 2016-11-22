@@ -49,6 +49,7 @@ Many of these have still version 1.0, because they were never released to the pu
 | command-refill | 1.0 | New command !refill for refilling your worn soft boots or firewalker boots (or any other item - configurable).|
 | command-save | 1.0 | New command !save for self saving.|
 | experience-rune | 1.0 | Gives player experience when used. Configurable limit & amount.|
+| global-save | 1.0 | Global save system. Allows you to shutdown the server at configured time.|
 | guild-cast | 1.0 | New command !gc for broadcasting guild messages.|
 | guild-outfit | 1.0 | New command !go for changing outfit of all guild members being online.|
 | killed-monsters-counter | 1.0 | Simple killed monsters counter. Displays message each time you kill a monster.|

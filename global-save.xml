@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="global-save" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="global-save-lib"><![CDATA[
+		local shutdownEvent = 0
+
+		function prepareShutdown(minutes)
+			if(minutes <= 0) then
+				doSetGameState(GAMESTATE_SHUTDOWN)
+				return false
+			end
+
+			if(minutes == 1) then
+				doBroadcastMessage("Server is going down in " .. minutes .. " minute, please log out now!")
+			elseif(minutes <= 3) then
+				doBroadcastMessage("Server is going down in " .. minutes .. " minutes, please log out.")
+			else
+				doBroadcastMessage("Server is going down in " .. minutes .. " minutes.")
+			end
+
+			shutdownEvent = addEvent(prepareShutdown, 60000, minutes - 1)
+			return true
+		end
+	]]></config>
+
+	<!-- to do more saves per day just copy this part -->
+	<globalevent name="global-save-event" time="05:55:00" event="buffer"><![CDATA[
+		domodlib('global-save-lib')
+		prepareShutdown(5) -- in 5 minutes
+		_result = true
+	]]></globalevent>
+</mod>
