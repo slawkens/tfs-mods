@@ -36,7 +36,7 @@ Many of these have still version 1.0, because they were never released to the pu
 | anti-trap | 1.3 | New command !noob which will prevent blocking by noobs.|
 | ballista | 1.0 | Showing a nice realistic effect when using ballista.|
 | bless-system | 1.0 | Buy blessings by using a command or an item.|
-| command-bank | 1.0 | Bank management via commands (balance, deposit, withdraw, transfer). Secure!|
+| command-bank | 1.1 | Bank management via commands (balance, deposit, withdraw, transfer). Secure!|
 | command-buy | 1.0 | New command !buy - buying items with gold coins.|
 | command-exp | 1.0 | New command !exp displaying experience needed to advance.|
 | command-ip | 1.0 | New command !ip displaying player ip.|
