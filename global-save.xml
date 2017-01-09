@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mod name="global-save" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<description><![CDATA[
+		Basically, this script does same thing like "globalSaveEnabled" in TFS
+			with addition that this one can be configured to make few global saves per day (unlimited amount)
+			plus, this one is written as a lua script, so you can modify it easier
+			WARNING: it works only with shutdown option
+
+		** Scroll down to add your own saves! **
+	]]></description>
+
 	<config name="global-save-lib"><![CDATA[
 		local shutdownEvent = 0
 
