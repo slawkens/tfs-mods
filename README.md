@@ -55,6 +55,7 @@ Many of these have still version 1.0, because they were never released to the pu
 | killed-monsters-counter | 1.0 | Simple killed monsters counter. Displays message each time you kill a monster.|
 | login-history | 1.0 | Save player login/logout history with date & ip.|
 | map-marks | 1.0 | Receive map marks by stepping on a tile.|
+| not-lose-level | 1.0 | Don't lose anything when you're under X level.|
 | peeper | 1.0 | Show a message when someone is looking at you.|
 | stop-watch | 1.0 | Useful tool for counting passed time.|
 | player_exp | 1.0 | Useful script to get player id/exp/last login/name |

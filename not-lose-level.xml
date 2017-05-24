@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mod name="not-lose-level" version="1.0" author="slawkens" contact="slawkens@gmail.com" enabled="yes">
+	<config name="not-lose-level-config"><![CDATA[
+		levelToNotLose = 50 -- under this level you wont lose anything (items, exp, mlevel)
+	]]></config>
+	<event type="login" name="not-lose-level-login" event="script"><![CDATA[
+		function onLogin(cid)
+			registerCreatureEvent(cid, "not-lose-level-death")
+			return true
+		end
+	]]></event>
+	<event type="preparedeath" name="not-lose-level-death" event="script"><![CDATA[
+		domodlib('not-lose-level-config')
+		
+		local config = {
+			levelToNotLose = levelToNotLose
+		}
+
+		function onPrepareDeath(cid, deathList, lastHitKiller, mostDamageKiller)
+			if isPlayer(cid) == true and getPlayerLevel(cid) <= config.levelToNotLose then
+				doCreatureSetDropLoot(cid, 0)
+				doPlayerSetLossPercent(cid, PLAYERLOSS_EXPERIENCE, 0)
+				doPlayerSetLossPercent(cid, PLAYERLOSS_MANA, 0)
+				doPlayerSetLossPercent(cid, PLAYERLOSS_SKILLS, 0)
+			end
+
+			return true
+		end
+	]]></event>
+</mod>
